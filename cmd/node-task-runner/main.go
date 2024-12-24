@@ -3,39 +3,41 @@ package main
 import (
 	"flag"
 	"fmt"
+	"node-task-runner/pkg/app"
 	"os"
 )
 
+const VERSION = "1.0.0"
+
 func main() {
-    // Define flags
-    name := flag.String("name", "World", "a name to say hello to")
-    flag.Parse()
+	flags := getFlags()
+	flag.Usage = usage
+	if flags.Version {
+		fmt.Printf("Version: %s\n", VERSION)
+		return
+	} else if flags.Help {
+		flag.Usage()
+		return
+	}
 
-    // Print the greeting
-    fmt.Printf("Hello, %s!\n", *name)
+	// eg: "nr --debug test" -> "test" = initialInut
+	var initialInput string
+	if len(flag.Args()) > 0 {
+		initialInput = flag.Args()[0]
+	}
 
-    // Handle additional commands
-    if len(os.Args) > 1 {
-        switch os.Args[1] {
-        case "version":
-            fmt.Println("Node Task Runner CLI v1.0.0")
-        case "fzf":
-            runFzf()
-        default:
-            fmt.Printf("Unknown command: %s\n", os.Args[1])
-        }
-    }
+	settings, err := app.NewSettings(app.WithCwd(flags.Cwd), app.WithDebug(flags.Debug), app.WithInitialInput(initialInput))
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error creating settings: %v\n", err)
+		return
+	}
+	app.Run(settings)
 }
 
-func runFzf() {
-    // Example fzf usage
-    opts := fzf.DefaultOptions()
-    opts.Prompt = "Select an option> "
-    opts.Items = []string{"Option 1", "Option 2", "Option 3"}
-    selected, err := fzf.Run(opts)
-    if err != nil {
-        fmt.Println("Error running fzf:", err)
-        return
-    }
-    fmt.Println("You selected:", selected)
+func usage() {
+	fmt.Fprintf(os.Stderr, "\nUsage of nt \n")
+	flag.VisitAll(func(f *flag.Flag) {
+		// override to show e.g (--flag) instead of -flag
+		fmt.Fprintf(os.Stderr, "  --%s\n\t%s\n", f.Name, f.Usage)
+	})
 }

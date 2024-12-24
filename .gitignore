@@ -11,14 +11,13 @@
 *.cover
 
 # Output of the go build tool
-/build/
+/bin/
 
 # Temporary files
 *.tmp
 *.temp
 
 # IDE/editor specific files
-.vscode/
 .idea/
 *.swp
 
@@ -31,3 +30,6 @@ vendor/
 # OS generated files
 .DS_Store
 Thumbs.db
+
+# Debug stuff
+__debug*

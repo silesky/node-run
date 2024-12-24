@@ -1,29 +1,34 @@
-# Node Task Runner
+# node-run
+An fzf-like npm script runner with monorepo support. Written in go.
 
-This is a simple Go CLI package that prints "Hello, World!" and includes fzf-like capabilities.
+Supports all modern package managers:
 
+* npm ✅ 
+* pnpm ✅ 
+* yarn ✅ 
+
+## Installation
+
+```
+brew tap silesky/tap
+brew install node-run
+```
 ## Usage
-
-To build the CLI:
-
-```sh
-go build -o node-task-runner
+```
+$> cd ~/projects/my-node-package
+$> nr
 ```
 
-To run the CLI:
+## Development
+
+### Build & Execute
 
 ```sh
-./node-task-runner --name=YourName
+make run ARGS=--cwd=~/projects/monorepo-example
 ```
 
-To check the version:
+### Build Only
 
 ```sh
-./node-task-runner version
-```
-
-To use fzf-like capabilities:
-
-```sh
-./node-task-runner fzf
+make build # See artifacts in `./bin`
 ```
