@@ -21,7 +21,7 @@ func findAllPackageJSONs(startDir string) ([]string, error) {
 
 		parentDir := filepath.Dir(currentDir)
 		if parentDir == currentDir {
-			// Reached the root directory
+			// Reached the root directory -- if its a parent of itself, we're at the root
 			break
 		}
 
