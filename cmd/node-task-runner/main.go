@@ -32,16 +32,17 @@ Use "ntk [command] --help" for more information about a command.
 
 func main() {
 	flag.Parse()
-
-	// Handle additional commands
 	if len(os.Args) > 1 {
+
 		switch os.Args[1] {
 		case "help":
 			printHelp()
 		case "version":
-			fmt.Println("Node Task Runner CLI v1.0.0")
+			fmt.Printf("Node Task Runner CLI: %v\n", "1.0.0")
 		default:
-			app.Run()
+			fmt.Println("Unrecognized argument")
 		}
+	} else {
+		app.Run()
 	}
 }
