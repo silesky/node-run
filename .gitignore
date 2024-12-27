@@ -11,7 +11,7 @@
 *.cover
 
 # Output of the go build tool
-/build/
+/bin/
 
 # Temporary files
 *.tmp
