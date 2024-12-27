@@ -1,3 +1,4 @@
+// Access to all the unexported functions/variable in anything in the 'package main'
 package main
 
 import (
