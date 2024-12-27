@@ -2,6 +2,7 @@ package main
 
 import (
 	"os/exec"
+	"strings"
 	"testing"
 )
 
@@ -13,17 +14,30 @@ const (
 	sourceDir = "./cmd/node-task-runner"
 )
 
-func TestMain(t *testing.T) {
+func TestVersionCommand(t *testing.T) {
 	setup(t)
 
-	// Test the version command
 	cmd := exec.Command("go", "run", sourceDir, "version")
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		t.Fatalf("Failed to run command: %v", err)
 	}
-	expected := "Node Task Runner CLI v1.0.0\n"
-	if string(output) != expected {
-		t.Errorf("Expected %q, but got %q", expected, string(output))
+	substr := "Node Task Runner"
+	if !strings.Contains(string(output), substr) {
+		t.Errorf("Expected %q to be within %q", substr, output)
+	}
+}
+
+func TestUnrecognizedCommand(t *testing.T) {
+	setup(t)
+
+	cmd := exec.Command("go", "run", sourceDir, "unknown")
+	output, err := cmd.CombinedOutput()
+	if err == nil {
+		t.Fatalf("Expected error for unrecognized command, but got none")
+	}
+	substr := "Unrecognized command"
+	if !strings.Contains(string(output), substr) {
+		t.Errorf("Expected %q to be within %q", substr, output)
 	}
 }

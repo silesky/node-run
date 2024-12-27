@@ -40,7 +40,8 @@ func main() {
 		case "version":
 			fmt.Printf("Node Task Runner CLI: %v\n", "1.0.0")
 		default:
-			fmt.Println("Unrecognized argument")
+			fmt.Printf("Unrecognized command: %s\n", os.Args[1])
+			os.Exit(1)
 		}
 	} else {
 		app.Run()
