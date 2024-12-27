@@ -13,8 +13,8 @@ build:
 		chmod +x $(BUILD_DIR)/$(BINARY_NAME)
 
 # Run the binary
-run: build
-		./$(BUILD_DIR)/$(BINARY_NAME) --name=YourName
+run: 
+		go run ./cmd/node-task-runner
 
 # Clean the build directory
 clean:

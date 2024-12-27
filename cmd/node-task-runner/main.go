@@ -1,4 +1,4 @@
-package nodetaskrunner
+package main
 
 import (
 	"flag"
@@ -8,21 +8,18 @@ import (
 )
 
 func main() {
-    name := flag.String("name", "World", "a name to say hello to")
-    flag.Parse()
+	name := flag.String("name", "World", "a name to say hello to")
+	flag.Parse()
 
-    fmt.Printf("Hello, %s!\n", *name)
+	fmt.Printf("Hello, %s!\n", *name)
 
-    // Handle additional commands
-    if len(os.Args) > 1 {
-        switch os.Args[1] {
-        case "version":
-            fmt.Println("Node Task Runner CLI v1.0.0")
-        default:
-            app.Run()
-        }
-    }
+	// Handle additional commands
+	if len(os.Args) > 1 {
+		switch os.Args[1] {
+		case "version":
+			fmt.Println("Node Task Runner CLI v1.0.0")
+		default:
+			app.Run()
+		}
+	}
 }
-
-
-   
