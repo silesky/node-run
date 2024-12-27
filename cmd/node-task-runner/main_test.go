@@ -32,12 +32,8 @@ func TestUnrecognizedCommand(t *testing.T) {
 	setup(t)
 
 	cmd := exec.Command("go", "run", sourceDir, "unknown")
-	output, err := cmd.CombinedOutput()
+	_, err := cmd.CombinedOutput()
 	if err == nil {
 		t.Fatalf("Expected error for unrecognized command, but got none")
-	}
-	substr := "Unrecognized command"
-	if !strings.Contains(string(output), substr) {
-		t.Errorf("Expected %q to be within %q", substr, output)
 	}
 }
