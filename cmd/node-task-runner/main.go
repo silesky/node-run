@@ -7,15 +7,37 @@ import (
 	"os"
 )
 
-func main() {
-	name := flag.String("name", "World", "a name to say hello to")
-	flag.Parse()
+func printHelp() {
+	helpText := `
+Node Task Runner CLI
 
-	fmt.Printf("Hello, %s!\n", *name)
+Usage:
+  ntk [command]
+
+Available Commands:
+  help        Show this help message
+  version     Print the version number
+
+Flags:
+  --name      Specify a name to greet
+
+Examples:
+  ntk --name=YourName
+  ntk version
+
+Use "ntk [command] --help" for more information about a command.
+`
+	fmt.Println(helpText)
+}
+
+func main() {
+	flag.Parse()
 
 	// Handle additional commands
 	if len(os.Args) > 1 {
 		switch os.Args[1] {
+		case "help":
+			printHelp()
 		case "version":
 			fmt.Println("Node Task Runner CLI v1.0.0")
 		default:

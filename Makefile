@@ -9,12 +9,12 @@ all: build
 # Build the binary
 build:
 		mkdir -p $(BUILD_DIR)
-		go build -o $(BUILD_DIR)/$(BINARY_NAME) ./cmd/node-task-runner
+		go build -o $(BUILD_DIR)/$(BINARY_NAME) ./cmd/node-task-runner $(ARGS)
 		chmod +x $(BUILD_DIR)/$(BINARY_NAME)
 
 # Run the binary
 run: 
-		go run ./cmd/node-task-runner
+		go run ./cmd/node-task-runner $(ARGS)
 
 # Clean the build directory
 clean:
@@ -22,4 +22,4 @@ clean:
 
 # Run tests
 test:
-		go test
+		go test $(ARGS)
