@@ -25,7 +25,7 @@ func TestVersionCommand(t *testing.T) {
 	}
 	substr := "Node Task Runner"
 	if !strings.Contains(string(output), substr) {
-		t.Errorf("Expected %q to be within %q", substr, output)
+		t.Fatalf("Expected %q to be within %q", substr, output)
 	}
 }
 
