@@ -11,7 +11,7 @@ func setup(t *testing.T) {
 }
 
 const (
-	sourceDir = "./cmd/node-task-runner"
+	sourceDir = "."
 )
 
 func TestVersionCommand(t *testing.T) {

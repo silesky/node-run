@@ -22,4 +22,4 @@ clean:
 
 # Run tests
 test:
-		go test -v $(ARGS)
+		go test ./... -v$(ARGS)
