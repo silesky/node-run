@@ -12,8 +12,8 @@ type flags struct {
 }
 
 func getFlags() flags {
-	help := flag.Bool("help", false, "Print help")
-	version := flag.Bool("version", false, "Print version")
+	help := flag.Bool("help", false, "Show help text")
+	version := flag.Bool("version", false, "Show version")
 
 	// custom help function
 	flag.Usage = func() {
