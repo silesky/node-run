@@ -52,8 +52,8 @@ func Search(paths []string) {
 
 	idx, err := fuzzyfinder.Find(
 		commands,
-		func(i int) string {
-			return "[" + commands[i].PackageName + "]" + " " + commands[i].Name + " - " + commands[i].Command
+		func(idx int) string {
+			return fmt.Sprintf("[%s] %s - %s", commands[idx].PackageName, commands[idx].Name, commands[idx].Command)
 		},
 	)
 	if err != nil {
