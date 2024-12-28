@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"node-task-runner/pkg/app"
 	"os"
@@ -26,26 +25,10 @@ Examples:
 
 const VERSION = "1.0.0"
 
-type Flags struct {
-	Help    bool
-	Version bool
-}
-
-func getFlags() Flags {
-	help := flag.Bool("help", false, "Print help")
-	version := flag.Bool("version", false, "Print version")
-	flag.Parse()
-	return Flags{
-		Help:    *help,
-		Version: *version,
-	}
-}
-
 func main() {
 	flags := getFlags()
 	if flags.Version {
 		fmt.Printf("Version: %s\n", VERSION)
-		return
 	} else if flags.Help {
 		printHelp()
 		return
