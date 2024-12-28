@@ -41,10 +41,13 @@ func Run() {
 		fmt.Fprintf(os.Stderr, "Error getting current directory: %v\n", err)
 	}
 	packages, err := findAllPackageJSONs(currentDirectory)
+
+	// make an anonymous struct
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error looking for packages %v\n", err)
+		fmt.Fprintf(os.Stderr, "Error looking for packages: %v\n", err)
+	} else {
+		fmt.Printf("found packages: %v", packages)
 	}
-	fmt.Println(packages)
 	source := []string{"apple", "banana", "cherry"}
 	substring := "ban"
 	item, found := fuzzsearch.Search(source, substring)
