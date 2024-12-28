@@ -38,11 +38,11 @@ func findAllPackageJSONs(startDir string) ([]string, error) {
 func Run() {
 	currentDirectory, err := os.Getwd()
 	if err != nil {
-		fmt.Println("Error getting current directory:", err)
+		fmt.Fprintf(os.Stderr, "Error getting current directory: %v\n", err)
 	}
 	packages, err := findAllPackageJSONs(currentDirectory)
 	if err != nil {
-		fmt.Println("Error looking for packages", err)
+		fmt.Fprintf(os.Stderr, "Error looking for packages %v\n", err)
 	}
 	fmt.Println(packages)
 	source := []string{"apple", "banana", "cherry"}
