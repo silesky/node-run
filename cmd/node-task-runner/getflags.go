@@ -2,16 +2,16 @@ package main
 
 import "flag"
 
-type Flags struct {
+type flags struct {
 	Help    bool
 	Version bool
 }
 
-func getFlags() Flags {
+func getFlags() flags {
 	help := flag.Bool("help", false, "Print help")
 	version := flag.Bool("version", false, "Print version")
 	flag.Parse()
-	return Flags{
+	return flags{
 		Help:    *help,
 		Version: *version,
 	}
