@@ -5,7 +5,6 @@ BUILD_DIR = bin
 # Default target
 all: build
 
-
 # Build the binary
 build:
 		mkdir -p $(BUILD_DIR)
@@ -23,3 +22,7 @@ clean:
 # Run tests
 test:
 		go test ./... -v$(ARGS)
+
+# List the make targets
+help:                                                                                                                    
+		@grep '^[^#[:space:]].*:' Makefile
