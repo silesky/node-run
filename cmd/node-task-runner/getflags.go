@@ -17,7 +17,9 @@ func getFlags() flags {
 	// Custom usage function
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr, "\nUsage of ntk \n")
-		flag.PrintDefaults()
+		flag.VisitAll(func(f *flag.Flag) {
+			fmt.Fprintf(os.Stderr, "  --%s\n\t%s\n", f.Name, f.Usage)
+		})
 	}
 	flag.Parse()
 	return flags{
