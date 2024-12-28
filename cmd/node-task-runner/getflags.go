@@ -2,6 +2,8 @@ package main
 
 import (
 	"flag"
+	"fmt"
+	"os"
 )
 
 type flags struct {
@@ -12,6 +14,11 @@ type flags struct {
 func getFlags() flags {
 	help := flag.Bool("help", false, "Print help")
 	version := flag.Bool("version", false, "Print version")
+	// Custom usage function
+	flag.Usage = func() {
+		fmt.Fprintf(os.Stderr, "Usage of ntk")
+		flag.PrintDefaults()
+	}
 	flag.Parse()
 	return flags{
 		Help:    *help,
