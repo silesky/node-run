@@ -7,6 +7,7 @@ all: build
 
 # Build the binary
 build:
+		@echo "Building...\n"
 		mkdir -p $(BUILD_DIR)
 		go build -o $(BUILD_DIR)/$(BINARY_NAME) ./cmd/node-task-runner $(ARGS)
 		chmod +x $(BUILD_DIR)/$(BINARY_NAME)
