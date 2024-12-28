@@ -16,7 +16,7 @@ func getFlags() flags {
 	version := flag.Bool("version", false, "Print version")
 	// Custom usage function
 	flag.Usage = func() {
-		fmt.Fprintf(os.Stderr, "Usage of ntk")
+		fmt.Fprintf(os.Stderr, "\nUsage of ntk \n")
 		flag.PrintDefaults()
 	}
 	flag.Parse()
