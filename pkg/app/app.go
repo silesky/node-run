@@ -35,6 +35,8 @@ func findAllPackageJSONs(startDir string) ([]string, error) {
 	return packageJSONPaths, nil
 }
 
+// TODO: be able to pass the path to the package.json as an argument in flags.
+// TODO: be able to specifiy the cwd with cwd
 func Run() {
 	currentDirectory, err := os.Getwd()
 	if err != nil {

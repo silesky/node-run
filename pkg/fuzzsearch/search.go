@@ -32,7 +32,7 @@ func parseCommands(packageJSON PackageJSON) []Command {
 	return commands
 }
 
-func Search(paths []string) {
+func Search(paths []string) (*Command, error) {
 	var packages []PackageJSON
 
 	// Read and parse JSON files from the provided paths
@@ -57,9 +57,10 @@ func Search(paths []string) {
 		},
 	)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 	fmt.Printf("selected: %v\n", idx)
+	return &commands[idx], nil
 }
 
 func parseJSONFile(path string) (*PackageJSON, error) {
