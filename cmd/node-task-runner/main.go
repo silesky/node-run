@@ -19,11 +19,10 @@ Available Commands:
   version     Print the version number
 
 Flags:
-  --help show this help message
+  --help - show this help message
 
 Examples:
-  ntk --name=YourName
-  ntk version
+  ntk 
 
 Use "ntk [command] --help" for more information about a command.
 `
@@ -32,16 +31,27 @@ Use "ntk [command] --help" for more information about a command.
 
 const VERSION = "1.0.0"
 
-func main() {
+type Flags struct {
+	Help    bool
+	Version bool
+}
+
+func getFlags() Flags {
+	help := flag.Bool("help", false, "Print help")
+	version := flag.Bool("version", false, "Print version")
 	flag.Parse()
-
-	help := *flag.Bool("help", false, "Print help")
-	version := *flag.Bool("version", false, "Print version")
-
-	if version {
-		fmt.Printf("Version: %s\n", VERSION)
+	return Flags{
+		Help:    *help,
+		Version: *version,
 	}
-	if help {
+}
+
+func main() {
+	flags := getFlags()
+	if flags.Version {
+		fmt.Printf("Version: %s\n", VERSION)
+		return
+	} else if flags.Help {
 		printHelp()
 		return
 	}
