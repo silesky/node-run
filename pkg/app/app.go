@@ -48,12 +48,6 @@ func Run() {
 	} else {
 		fmt.Printf("found packages: %v", packages)
 	}
-	source := []string{"apple", "banana", "cherry"}
-	substring := "ban"
-	item, found := fuzzsearch.Search(source, substring)
-	if found {
-		fmt.Printf("Match found: %s\n", item)
-	} else {
-		fmt.Println("No match found")
-	}
+	// TODO: add packages
+	fuzzsearch.Search()
 }
