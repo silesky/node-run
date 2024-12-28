@@ -12,19 +12,14 @@ func printHelp() {
 Node Task Runner CLI
 
 Usage:
-  ntk [command]
-
-Available Commands:
-  help        Show this help message
-  version     Print the version number
+  ntk
 
 Flags:
   --help - show this help message
+  --version - show version
 
 Examples:
   ntk 
-
-Use "ntk [command] --help" for more information about a command.
 `
 	fmt.Println(helpText)
 }
