@@ -32,8 +32,8 @@ func main() {
 		}
 	} else {
 		settings := app.NewSettings(app.WithCwd(flags.Cwd))
-		ctx := app.NewSettingsContext(context.Background(), *settings)
-		app.Run(*settings)
+		ctx := app.NewSettingsContext(context.Background(), settings)
+		app.Run(ctx)
 	}
 }
 

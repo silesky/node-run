@@ -37,14 +37,14 @@ func findAllPackageJSONs(startDir string) ([]string, error) {
 }
 
 func Run(ctx context.Context) {
-	settings, ok := FromSettingsContext(ctx)
-	if !ok {
-		fmt.Fprintf(os.Stderr, "Error retrieving settings from context\n")
-		return
-	}
-	currentDirectory, err := os.Getwd()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error getting current directory: %v\n", err)
+	settings := FromSettingsContext(ctx)
+	currentDirectory := settings.Cwd
+	if currentDirectory == "" {
+		var err error
+		currentDirectory, err = os.Getwd()
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error getting current directory: %v\n", err)
+		}
 	}
 	packages, err := findAllPackageJSONs(currentDirectory)
 

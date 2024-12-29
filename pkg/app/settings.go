@@ -13,12 +13,12 @@ type Settings struct {
 type Option func(*Settings)
 
 // NewSettings creates a new Settings struct with the provided options
-func NewSettings(opts ...Option) *Settings {
+func NewSettings(opts ...Option) Settings {
 	settings := &Settings{}
 	for _, opt := range opts {
 		opt(settings)
 	}
-	return settings
+	return *settings
 }
 
 // WithCwd sets the Cwd field on the Settings struct
