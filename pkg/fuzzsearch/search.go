@@ -46,7 +46,7 @@ func getFuzzyMatchedCommand(commands []Command) (int, error) {
 func ExtractCommandsFromPackageJson(pkgJsonPaths ...string) []Command {
 	var packages []PkgJson
 	for _, path := range pkgJsonPaths {
-		packageJSON, err := parseJsonFile(path)
+		packageJSON, err := parsePkgJsonFile(path)
 		if err != nil {
 			log.Printf("Error parsing JSON file %s: %v", path, err)
 			continue
@@ -72,7 +72,8 @@ func ExtractCommandsFromPath(pkgJsonPaths []string) (*Command, error) {
 	return &commands[idx], nil
 }
 
-func parseJsonFile(path string) (*PkgJson, error) {
+// Parse package json
+func parsePkgJsonFile(path string) (*PkgJson, error) {
 	file, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
