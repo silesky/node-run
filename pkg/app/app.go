@@ -1,6 +1,7 @@
 package app
 
 import (
+	"context"
 	"fmt"
 	"node-task-runner/pkg/fuzzsearch"
 	"os"
@@ -35,7 +36,12 @@ func findAllPackageJSONs(startDir string) ([]string, error) {
 	return packageJSONPaths, nil
 }
 
-func Run(settings Settings) {
+func Run(ctx context.Context) {
+	settings, ok := FromSettingsContext(ctx)
+	if !ok {
+		fmt.Fprintf(os.Stderr, "Error retrieving settings from context\n")
+		return
+	}
 	currentDirectory, err := os.Getwd()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error getting current directory: %v\n", err)

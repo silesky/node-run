@@ -1,5 +1,9 @@
 package app
 
+import (
+	"context"
+)
+
 type Settings struct {
 	Cwd string
 	// Add more fields as needed
@@ -22,4 +26,22 @@ func WithCwd(cwd string) Option {
 	return func(s *Settings) {
 		s.Cwd = cwd
 	}
+}
+
+type contextKey string
+
+const settingsKey contextKey = "settings"
+
+// NewSettingsContext creates a new context with the provided settings
+func NewSettingsContext(ctx context.Context, settings Settings) context.Context {
+	return context.WithValue(ctx, settingsKey, settings)
+}
+
+// FromSettingsContext retrieves the settings from the context
+func FromSettingsContext(ctx context.Context) Settings {
+	settings, ok := ctx.Value(settingsKey).(Settings)
+	if !ok {
+		panic("invariant")
+	}
+	return settings
 }

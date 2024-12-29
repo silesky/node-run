@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"node-task-runner/pkg/app"
@@ -31,6 +32,7 @@ func main() {
 		}
 	} else {
 		settings := app.NewSettings(app.WithCwd(flags.Cwd))
+		ctx := app.NewSettingsContext(context.Background(), *settings)
 		app.Run(*settings)
 	}
 }
