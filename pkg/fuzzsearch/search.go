@@ -31,6 +31,7 @@ func GetCommandsFromPaths(pkgJsonPaths []string) (*Command, error) {
 	return &commands[selectedIdx], nil
 }
 
+// Display command selector menu (returns user input)
 func displayCommandSelector(commands []Command) (int, error) {
 	idx, err := fuzzyfinder.Find(
 		commands,
