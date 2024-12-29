@@ -23,15 +23,15 @@ type Command struct {
 // Get commands from the scripts key and return them
 func GetCommandsFromPaths(pkgJsonPaths []string) (*Command, error) {
 	commands := parseCommandsFromFiles(pkgJsonPaths)
-	idx, err := getFuzzyMatchedCommand(commands)
+	selectedIdx, err := displayCommandSelector(commands)
 	if err != nil {
 		return nil, err
 	}
-	fmt.Printf("selected: %v\n", idx)
-	return &commands[idx], nil
+	fmt.Printf("selected: %v\n", selectedIdx)
+	return &commands[selectedIdx], nil
 }
 
-func getFuzzyMatchedCommand(commands []Command) (int, error) {
+func displayCommandSelector(commands []Command) (int, error) {
 	idx, err := fuzzyfinder.Find(
 		commands,
 		func(idx int) string {
