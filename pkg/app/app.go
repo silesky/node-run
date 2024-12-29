@@ -51,5 +51,5 @@ func Run() {
 		fmt.Printf("found packages: %v", packages)
 	}
 	// TODO: add packages
-	fuzzsearch.Search([]string{"/Users/seth.silesky/projects/node-raw-socket/package.json"})
+	fuzzsearch.ExtractCommandsFromPath([]string{"/Users/seth.silesky/projects/node-raw-socket/package.json"})
 }
