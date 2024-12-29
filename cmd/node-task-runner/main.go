@@ -26,15 +26,11 @@ func main() {
 		case "help":
 			flag.Usage()
 			return
-		default:
-			fmt.Printf("Unrecognized command: %s\n", os.Args[1])
-			os.Exit(1)
 		}
-	} else {
-		settings := app.NewSettings(app.WithCwd(flags.Cwd))
-		ctx := app.NewSettingsContext(context.Background(), settings)
-		app.Run(ctx)
 	}
+	settings := app.NewSettings(app.WithCwd(flags.Cwd))
+	ctx := app.NewSettingsContext(context.Background(), settings)
+	app.Run(ctx)
 }
 
 func usage() {

@@ -32,16 +32,14 @@ type contextKey string
 
 const settingsKey contextKey = "settings"
 
-// NewSettingsContext creates a new context with the provided settings
 func NewSettingsContext(ctx context.Context, settings Settings) context.Context {
 	return context.WithValue(ctx, settingsKey, settings)
 }
 
-// FromSettingsContext retrieves the settings from the context
 func FromSettingsContext(ctx context.Context) Settings {
 	settings, ok := ctx.Value(settingsKey).(Settings)
 	if !ok {
-		panic("invariant")
+		panic("invariant: settings does not exist")
 	}
 	return settings
 }
