@@ -28,7 +28,7 @@ func main() {
 			return
 		}
 	}
-	settings := app.NewSettings(app.WithCwd(flags.Cwd))
+	settings := app.NewSettings(app.WithCwd(flags.Cwd), app.WithDebug(flags.Debug))
 	ctx := app.NewSettingsContext(context.Background(), settings)
 	app.Run(ctx)
 }

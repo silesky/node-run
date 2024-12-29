@@ -5,7 +5,8 @@ import (
 )
 
 type Settings struct {
-	Cwd string
+	Cwd   string
+	Debug bool
 	// Add more fields as needed
 }
 
@@ -25,6 +26,13 @@ func NewSettings(opts ...Option) Settings {
 func WithCwd(cwd string) Option {
 	return func(s *Settings) {
 		s.Cwd = cwd
+	}
+}
+
+// WithDebug sets the Debug field on the Settings struct
+func WithDebug(debug bool) Option {
+	return func(s *Settings) {
+		s.Debug = debug
 	}
 }
 
