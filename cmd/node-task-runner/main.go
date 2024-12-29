@@ -30,7 +30,8 @@ func main() {
 			os.Exit(1)
 		}
 	} else {
-		app.Run()
+		settings := app.NewSettings(app.WithCwd(flags.Cwd))
+		app.Run(*settings)
 	}
 }
 
