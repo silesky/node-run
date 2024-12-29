@@ -59,6 +59,7 @@ func parseCommandsFromFiles(pkgJsonPaths []string) []Command {
 	return commands
 }
 
+// Parse commands list from a package json
 func parseCommands(packageJson PkgJson) []Command {
 	var commands []Command
 	for key, value := range packageJson.Scripts {
