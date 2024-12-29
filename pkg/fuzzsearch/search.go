@@ -21,27 +21,14 @@ type Command struct {
 }
 
 // Get commands from the scripts key and return them
-func ExtractCommandsFromPath(pkgJsonPaths []string) (*Command, error) {
-	commands := extractCommandsFromPackageJson(pkgJsonPaths...)
-
+func GetCommandsFromPaths(pkgJsonPaths []string) (*Command, error) {
+	commands := parseCommandsFromFiles(pkgJsonPaths)
 	idx, err := getFuzzyMatchedCommand(commands)
 	if err != nil {
 		return nil, err
 	}
 	fmt.Printf("selected: %v\n", idx)
 	return &commands[idx], nil
-}
-
-func parseCommands(packageJson PkgJson) []Command {
-	var commands []Command
-	for key, value := range packageJson.Scripts {
-		commands = append(commands, Command{
-			PackageName: packageJson.Name,
-			Name:        key,
-			Command:     value,
-		})
-	}
-	return commands
 }
 
 func getFuzzyMatchedCommand(commands []Command) (int, error) {
@@ -55,7 +42,7 @@ func getFuzzyMatchedCommand(commands []Command) (int, error) {
 }
 
 // Read and parse JSON files from the provided paths
-func extractCommandsFromPackageJson(pkgJsonPaths ...string) []Command {
+func parseCommandsFromFiles(pkgJsonPaths []string) []Command {
 	var packages []PkgJson
 	for _, path := range pkgJsonPaths {
 		packageJSON, err := parsePkgJsonFile(path)
@@ -68,6 +55,18 @@ func extractCommandsFromPackageJson(pkgJsonPaths ...string) []Command {
 	var commands []Command
 	for _, pkg := range packages {
 		commands = append(commands, parseCommands(pkg)...)
+	}
+	return commands
+}
+
+func parseCommands(packageJson PkgJson) []Command {
+	var commands []Command
+	for key, value := range packageJson.Scripts {
+		commands = append(commands, Command{
+			PackageName: packageJson.Name,
+			Name:        key,
+			Command:     value,
+		})
 	}
 	return commands
 }
