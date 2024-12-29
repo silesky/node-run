@@ -42,8 +42,8 @@ func getFuzzyMatchedCommand(commands []Command) (int, error) {
 	return idx, err
 }
 
+// Read and parse JSON files from the provided paths
 func ExtractCommandsFromPackageJson(pkgJsonPaths ...string) []Command {
-	// Read and parse JSON files from the provided paths
 	var packages []PkgJson
 	for _, path := range pkgJsonPaths {
 		packageJSON, err := parseJsonFile(path)
@@ -60,6 +60,7 @@ func ExtractCommandsFromPackageJson(pkgJsonPaths ...string) []Command {
 	return commands
 }
 
+// Get commands from the scripts key and return them
 func ExtractCommandsFromPath(pkgJsonPaths []string) (*Command, error) {
 	commands := ExtractCommandsFromPackageJson(pkgJsonPaths...)
 
