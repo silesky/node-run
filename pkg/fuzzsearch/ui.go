@@ -64,36 +64,36 @@ func (m *CommandModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m CommandModel) View() string {
-	var b strings.Builder
+	var lines strings.Builder
 
-	b.WriteString("\n Filter: ")
-	b.WriteString(m.input)
-	b.WriteString("\n\n")
+	lines.WriteString("\n Filter: ")
+	lines.WriteString(m.input)
+	lines.WriteString("\n\n")
 
 	for i, cmd := range m.filtered {
-		cursor := " " // Default cursor indicator
+		cursor := "  "
 		if m.cursor == i {
-			cursor = ">" // Highlight current selection
+			cursor = "> "
 		}
 
 		// Format the line for the current command
 		line := fmt.Sprintf("%s [%s] %s - %s", cursor, cmd.PackageName, cmd.Name, cmd.Command)
-
+		line = strings.Replace(line, cursor, "", 1)
 		if m.cursor == i {
-			b.WriteString(m.highlighted.Render(line))
+			lines.WriteString(cursor + m.highlighted.Render(line))
 		} else {
-			b.WriteString(line)
+			lines.WriteString(cursor + line)
 		}
 
-		b.WriteString("\n")
+		lines.WriteString("\n")
 	}
 
 	if len(m.filtered) == 0 {
-		b.WriteString("No results found.\n")
+		lines.WriteString("No results found.\n")
 	}
 
-	b.WriteString("\nPress q to quit.\n")
-	return b.String()
+	lines.WriteString("\nPress q to quit.\n")
+	return lines.String()
 }
 
 // filterCommands filters commands based on user input
@@ -114,7 +114,7 @@ func DisplayCommandSelector(commands []Command) (*Command, error) {
 	m := &CommandModel{
 		commands:    commands,
 		filtered:    commands, // Start with all commands
-		highlighted: lipgloss.NewStyle().Underline(true),
+		highlighted: lipgloss.NewStyle().Foreground(lipgloss.Color("205")),
 	}
 
 	program := tea.NewProgram(m)
