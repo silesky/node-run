@@ -7,12 +7,11 @@ import (
 
 var (
 	DebugLogger *log.Logger
-	debug       bool
+	debug       = false
 )
 
 func init() {
 	DebugLogger = log.New(os.Stdout, "Debug: ", log.Ldate|log.Ltime|log.Lshortfile)
-	SetDebug(false)
 }
 
 // SetDebug sets the debug flag
