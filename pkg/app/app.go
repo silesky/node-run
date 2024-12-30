@@ -63,6 +63,7 @@ func Run(ctx context.Context) {
 		currentDirectory, err = os.Getwd()
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Error getting current directory: %v\n", err)
+			return
 		}
 	}
 	logger.Debugf("Current directory: %s", currentDirectory)
@@ -71,9 +72,8 @@ func Run(ctx context.Context) {
 	// make an anonymous struct
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error looking for packages: %v\n", err)
-	} else {
-		fmt.Printf("found packages: %v", packages)
+		return
 	}
-	// TODO: add packages
+	logger.Debugf("Found packages: %v\n", packages)
 	fuzzsearch.GetCommandsFromPaths(packages)
 }
