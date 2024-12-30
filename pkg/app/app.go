@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"node-task-runner/pkg/fuzzsearch"
-	"node-task-runner/pkg/logging"
+	"node-task-runner/pkg/logger"
 	"os"
 	"path/filepath"
 )
@@ -39,7 +39,7 @@ func findAllPackageJSONs(startDir string) ([]string, error) {
 
 func Run(ctx context.Context) {
 	settings := FromSettingsContext(ctx)
-	logging.SetDebug(settings.Debug)
+	logger.SetDebug(settings.Debug)
 	currentDirectory := settings.Cwd
 	if currentDirectory == "" {
 		var err error
@@ -48,7 +48,7 @@ func Run(ctx context.Context) {
 			fmt.Fprintf(os.Stderr, "Error getting current directory: %v\n", err)
 		}
 	}
-	logging.Infof("Current directory: %s", currentDirectory)
+	logger.Debugf("Current directory: %s", currentDirectory)
 	packages, err := findAllPackageJSONs(currentDirectory)
 
 	// make an anonymous struct
