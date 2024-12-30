@@ -160,6 +160,6 @@ func Run(ctx context.Context) {
 		fmt.Fprintf(os.Stderr, "Error looking for packages: %v\n", err)
 		return
 	}
-	logger.Debugf("Found packages: %v\n", packages)
+	logger.Debugf("Found packages: %#v\n", packages)
 	fuzzsearch.GetCommandsFromPaths(packages)
 }
