@@ -7,9 +7,26 @@ import (
 	"node-task-runner/pkg/logger"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
+// expands/normalize the ~ to the user's home directory
+func expandPath(path string) (string, error) {
+	if strings.HasPrefix(path, "~") {
+		homeDir, err := os.UserHomeDir()
+		if err != nil {
+			return "", err
+		}
+		path = filepath.Join(homeDir, path[1:])
+	}
+	return path, nil
+}
+
 func findAllPackageJSONs(startDir string) ([]string, error) {
+	startDir, err := expandPath(startDir)
+	if err != nil {
+		return nil, err
+	}
 
 	var packageJSONPaths []string
 	currentDir := startDir
@@ -58,5 +75,5 @@ func Run(ctx context.Context) {
 		fmt.Printf("found packages: %v", packages)
 	}
 	// TODO: add packages
-	fuzzsearch.GetCommandsFromPaths([]string{"/Users/seth.silesky/projects/node-raw-socket/package.json"})
+	fuzzsearch.GetCommandsFromPaths(packages)
 }
