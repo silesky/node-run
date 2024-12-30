@@ -12,7 +12,7 @@ var (
 
 func init() {
 	DebugLogger = log.New(os.Stdout, "Debug: ", log.Ldate|log.Ltime|log.Lshortfile)
-	debug = false
+	SetDebug(false)
 }
 
 // SetDebug sets the debug flag
