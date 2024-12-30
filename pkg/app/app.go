@@ -22,6 +22,7 @@ func expandPath(path string) (string, error) {
 	return path, nil
 }
 
+// findAllPackageJSONs finds all package.json files starting from the given directory
 func findAllPackageJSONs(startDir string) ([]string, error) {
 	startDir, err := expandPath(startDir)
 	if err != nil {
@@ -29,22 +30,20 @@ func findAllPackageJSONs(startDir string) ([]string, error) {
 	}
 
 	var packageJSONPaths []string
-	currentDir := startDir
-
-	// keep iterating until you find all of the package.jsons
-	for {
-		packageJSONPath := filepath.Join(currentDir, "package.json")
-		if _, err := os.Stat(packageJSONPath); err == nil {
-			packageJSONPaths = append(packageJSONPaths, packageJSONPath)
+	err = filepath.Walk(startDir, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
 		}
-
-		parentDir := filepath.Dir(currentDir)
-		if parentDir == currentDir {
-			// Reached the root directory -- if its a parent of itself, we're at the root
-			break
+		if info.IsDir() && info.Name() == "node_modules" {
+			return filepath.SkipDir
 		}
-
-		currentDir = parentDir
+		if info.Name() == "package.json" {
+			packageJSONPaths = append(packageJSONPaths, path)
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, err
 	}
 
 	if len(packageJSONPaths) == 0 {
@@ -52,6 +51,28 @@ func findAllPackageJSONs(startDir string) ([]string, error) {
 	}
 
 	return packageJSONPaths, nil
+}
+
+// GetPackages gets all packages in the current monorepo, regardless of the cwd
+func GetPackages(cwd string) ([]string, error) {
+	cwd, err := expandPath(cwd)
+	if err != nil {
+		return nil, err
+	}
+
+	// Traverse up to find the root of the monorepo
+	for {
+		if _, err := os.Stat(filepath.Join(cwd, "package.json")); err == nil {
+			break
+		}
+		parentDir := filepath.Dir(cwd)
+		if parentDir == cwd {
+			return nil, fmt.Errorf("could not find the root of the monorepo")
+		}
+		cwd = parentDir
+	}
+
+	return findAllPackageJSONs(cwd)
 }
 
 func Run(ctx context.Context) {
@@ -67,7 +88,7 @@ func Run(ctx context.Context) {
 		}
 	}
 	logger.Debugf("Current directory: %s", currentDirectory)
-	packages, err := findAllPackageJSONs(currentDirectory)
+	packages, err := GetPackages(currentDirectory)
 
 	// make an anonymous struct
 	if err != nil {
