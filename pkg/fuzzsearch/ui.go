@@ -18,12 +18,10 @@ type CommandModel struct {
 	highlighted lipgloss.Style
 }
 
-// Initialize the model
 func (m *CommandModel) Init() tea.Cmd {
 	return nil
 }
 
-// Update handles messages
 func (m *CommandModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 
@@ -107,7 +105,8 @@ func filterCommands(commands []Command, query string) []Command {
 	return result
 }
 
-func CommandSelector(commands []Command) (*Command, error) {
+// commandSelector displays the command selector UI
+func DisplayCommandSelector(commands []Command) (*Command, error) {
 	m := &CommandModel{
 		commands:    commands,
 		filtered:    commands, // Start with all commands

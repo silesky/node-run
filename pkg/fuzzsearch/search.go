@@ -31,7 +31,7 @@ func GetCommandsFromPaths(pkgJsonPaths []string) (*Command, error) {
 
 // Display command selector menu (returns user input)
 func displayCommandSelector(commands []Command) (*Command, error) {
-	return CommandSelector(commands)
+	return DisplayCommandSelector(commands)
 }
 
 // Read and parse JSON files from the provided paths
