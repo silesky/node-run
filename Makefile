@@ -20,9 +20,9 @@ run:
 clean:
 		rm -rf $(BUILD_DIR)
 
-# Run tests
+# Run all tests - make test ARGS="-run TestSpecificFunction"
 test:
-		go test ./... -v$(ARGS)
+		go test ./... -v$(ARGS) 
 
 # List the make targets
 help:                                                                                                                    
