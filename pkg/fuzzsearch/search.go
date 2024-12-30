@@ -2,11 +2,9 @@ package fuzzsearch
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
+	"node-task-runner/pkg/logger"
 	"os"
-
-	"github.com/ktr0731/go-fuzzyfinder"
 )
 
 type PkgJson struct {
@@ -23,23 +21,17 @@ type Command struct {
 // Get commands from the scripts key and return them
 func GetCommandsFromPaths(pkgJsonPaths []string) (*Command, error) {
 	commands := parseCommandsFromFiles(pkgJsonPaths)
-	selectedIdx, err := displayCommandSelector(commands)
+	selectedCommand, err := displayCommandSelector(commands)
 	if err != nil {
 		return nil, err
 	}
-	fmt.Printf("selected: %v\n", selectedIdx)
-	return &commands[selectedIdx], nil
+	logger.Debugf("Selected Command: %+v", selectedCommand)
+	return selectedCommand, nil
 }
 
 // Display command selector menu (returns user input)
-func displayCommandSelector(commands []Command) (int, error) {
-	idx, err := fuzzyfinder.Find(
-		commands,
-		func(idx int) string {
-			return fmt.Sprintf("[%s] %s - %s", commands[idx].PackageName, commands[idx].Name, commands[idx].Command)
-		},
-	)
-	return idx, err
+func displayCommandSelector(commands []Command) (*Command, error) {
+	return CommandSelector(commands)
 }
 
 // Read and parse JSON files from the provided paths
