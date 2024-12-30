@@ -10,12 +10,13 @@ import (
 
 // Model represents the Bubble Tea CommandModel
 type CommandModel struct {
-	commands    []Command
-	filtered    []Command
-	cursor      int
-	input       string
-	quitting    bool
-	highlighted lipgloss.Style
+	commands       []Command
+	filtered       []Command
+	cursor         int
+	input          string
+	quitting       bool
+	highlightStyle lipgloss.Style
+	filteredStyle  lipgloss.Style
 }
 
 func (m *CommandModel) Init() tea.Cmd {
@@ -56,6 +57,7 @@ func (m *CommandModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		default:
 			// if filtering using the search box
 			m.input += msg.String()
+			m.input = strings.TrimSpace(m.input)
 			m.filtered = filterCommands(m.commands, m.input)
 		}
 	}
@@ -67,7 +69,7 @@ func (m CommandModel) View() string {
 	var lines strings.Builder
 
 	lines.WriteString("\n Filter: ")
-	lines.WriteString(m.input)
+	lines.WriteString(m.filteredStyle.Render(m.input))
 	lines.WriteString("\n\n")
 
 	for i, cmd := range m.filtered {
@@ -80,7 +82,7 @@ func (m CommandModel) View() string {
 		line := fmt.Sprintf("%s [%s] %s - %s", cursor, cmd.PackageName, cmd.Name, cmd.Command)
 		line = strings.Replace(line, cursor, "", 1)
 		if m.cursor == i {
-			lines.WriteString(cursor + m.highlighted.Render(line))
+			lines.WriteString(cursor + m.highlightStyle.Render(line))
 		} else {
 			lines.WriteString(cursor + line)
 		}
@@ -112,9 +114,10 @@ func filterCommands(commands []Command, query string) []Command {
 // commandSelector displays the command selector UI
 func DisplayCommandSelector(commands []Command) (*Command, error) {
 	m := &CommandModel{
-		commands:    commands,
-		filtered:    commands, // Start with all commands
-		highlighted: lipgloss.NewStyle().Foreground(lipgloss.Color("205")),
+		commands:       commands,
+		filtered:       commands, // Start with all commands
+		highlightStyle: lipgloss.NewStyle().Foreground(lipgloss.Color("205")),
+		filteredStyle:  lipgloss.NewStyle().Foreground(lipgloss.Color("205")),
 	}
 
 	program := tea.NewProgram(m)
