@@ -54,6 +54,7 @@ func (m *CommandModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 
 		default:
+			// if filtering using the search box
 			m.input += msg.String()
 			m.filtered = filterCommands(m.commands, m.input)
 		}
@@ -62,33 +63,36 @@ func (m *CommandModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, nil
 }
 
-// View renders the UI
-func (m *CommandModel) View() string {
-	if m.quitting {
-		return "Goodbye!\n"
-	}
-
+func (m CommandModel) View() string {
 	var b strings.Builder
-	b.WriteString("Search: " + m.input + "\n\n")
+
+	b.WriteString("\n Filter: ")
+	b.WriteString(m.input)
+	b.WriteString("\n\n")
 
 	for i, cmd := range m.filtered {
-		cursor := " "
+		cursor := " " // Default cursor indicator
 		if m.cursor == i {
-			cursor = ">"
+			cursor = ">" // Highlight current selection
 		}
 
-		line := fmt.Sprintf("%s [%s] %s - %s\n", cursor, cmd.PackageName, cmd.Name, cmd.Command)
+		// Format the line for the current command
+		line := fmt.Sprintf("%s [%s] %s - %s", cursor, cmd.PackageName, cmd.Name, cmd.Command)
+
 		if m.cursor == i {
 			b.WriteString(m.highlighted.Render(line))
 		} else {
 			b.WriteString(line)
 		}
+
+		b.WriteString("\n")
 	}
 
 	if len(m.filtered) == 0 {
 		b.WriteString("No results found.\n")
 	}
 
+	b.WriteString("\nPress q to quit.\n")
 	return b.String()
 }
 
@@ -110,7 +114,7 @@ func DisplayCommandSelector(commands []Command) (*Command, error) {
 	m := &CommandModel{
 		commands:    commands,
 		filtered:    commands, // Start with all commands
-		highlighted: lipgloss.NewStyle().Foreground(lipgloss.Color("205")),
+		highlighted: lipgloss.NewStyle().Underline(true),
 	}
 
 	program := tea.NewProgram(m)
