@@ -6,13 +6,13 @@ import (
 )
 
 var (
-	InfoLogger  *log.Logger
-	ErrorLogger *log.Logger
+	DebugLogger *log.Logger
 	debug       bool
 )
 
 func init() {
-	InfoLogger = log.New(os.Stdout, "Debug: ", log.Ldate|log.Ltime|log.Lshortfile)
+	DebugLogger = log.New(os.Stdout, "Debug: ", log.Ldate|log.Ltime|log.Lshortfile)
+	debug = false
 }
 
 // SetDebug sets the debug flag
@@ -23,13 +23,13 @@ func SetDebug(d bool) {
 // Debug logs an info message if debugging is enabled
 func Debug(v ...interface{}) {
 	if debug {
-		InfoLogger.Println(v...)
+		DebugLogger.Println(v...)
 	}
 }
 
 // Debugf logs a formatted info message if debugging is enabled
 func Debugf(format string, v ...interface{}) {
 	if debug {
-		InfoLogger.Printf(format, v...)
+		DebugLogger.Printf(format, v...)
 	}
 }
