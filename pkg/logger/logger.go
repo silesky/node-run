@@ -6,13 +6,9 @@ import (
 )
 
 var (
-	DebugLogger *log.Logger
+	DebugLogger = log.New(os.Stdout, "Debug: ", log.Ldate|log.Ltime|log.Lshortfile)
 	debug       = false
 )
-
-func init() {
-	DebugLogger = log.New(os.Stdout, "Debug: ", log.Ldate|log.Ltime|log.Lshortfile)
-}
 
 // SetDebug sets the debug flag
 func SetDebug(d bool) {
