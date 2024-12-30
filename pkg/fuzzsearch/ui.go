@@ -57,7 +57,6 @@ func (m *CommandModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		default:
 			// if filtering using the search box
 			m.input += msg.String()
-			m.input = strings.TrimSpace(m.input)
 			m.filtered = filterCommands(m.commands, m.input)
 		}
 	}
@@ -101,6 +100,7 @@ func (m CommandModel) View() string {
 // filterCommands filters commands based on user input
 func filterCommands(commands []Command, query string) []Command {
 	var result []Command
+	query = strings.TrimSpace(query)
 	for _, cmd := range commands {
 		if strings.Contains(strings.ToLower(cmd.PackageName), strings.ToLower(query)) ||
 			strings.Contains(strings.ToLower(cmd.Name), strings.ToLower(query)) ||
