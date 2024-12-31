@@ -22,5 +22,11 @@ func Run(ctx context.Context) {
 	}
 	logger.Debugf("Current directory: %s", cwd)
 
-	fuzzsearch.GetCommandsFromPaths(cwd)
+	selectedCommand, err := fuzzsearch.GetCommandsFromPaths(cwd)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error getting commands: %v\n", err)
+		return
+	} else {
+		fmt.Printf("Executing: %v", selectedCommand)
+	}
 }
