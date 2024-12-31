@@ -50,7 +50,7 @@ func (m *TeaCommandModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.cursor++
 			}
 
-		case "left", "right":
+		case "left", "right", "tab":
 			// do nothing
 
 		case "backspace":
@@ -146,7 +146,7 @@ func DisplayCommandSelector(commands []Command) (*Command, error) {
 		return nil, err
 	}
 
-	if m.cursor >= 0 && m.cursor < len(m.filtered) {
+	if m.cursor >= 0 && m.cursor < len(m.filtered) && !m.quitting {
 		return &m.filtered[m.cursor], nil
 	}
 
