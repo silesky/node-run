@@ -32,7 +32,7 @@ type Command struct {
 func GetCommandsFromPaths(cwd string) (*Command, error) {
 	packages, err := GetPackages(cwd)
 	if err != nil {
-		return nil, fmt.Errorf("could not get packages: %v", err)
+		return nil, fmt.Errorf("could not get packages at %v: %v", cwd, err)
 	}
 	logger.Debugf("Found packages: %#v\n", packages)
 	commands := parseAllCommands(packages)
@@ -98,18 +98,6 @@ func parsePkgJsonFile(path string) (*PkgJson, error) {
 	return &packageJSON, nil
 }
 
-// expandPath expands/normalize the ~ to the user's home directory
-func expandPath(path string) (string, error) {
-	if strings.HasPrefix(path, "~") {
-		homeDir, err := os.UserHomeDir()
-		if err != nil {
-			return "", err
-		}
-		path = filepath.Join(homeDir, path[1:])
-	}
-	return path, nil
-}
-
 // hasWorkspacesArray checks if the package.json contains a workspaces array
 func hasWorkspacesArray(packageJSONPath string) bool {
 	file, err := os.ReadFile(packageJSONPath)
@@ -164,10 +152,6 @@ func parseWorkspacesArray(monorepoRoot string) ([]string, error) {
 
 // findAllPackageJSONs finds all package.json files starting from the given directory
 func findAllPackageJSONs(startDir string) ([]Package, error) {
-	startDir, err := expandPath(startDir)
-	if err != nil {
-		return nil, err
-	}
 
 	monorepoRoot, err := findMonorepoRoot(startDir)
 	if err != nil {
@@ -212,7 +196,7 @@ func findMonorepoRoot(startDir string) (string, error) {
 		}
 		parentDir := filepath.Dir(startDir)
 		if parentDir == startDir {
-			return "", fmt.Errorf("could not find the root of the monorepo")
+			return "", fmt.Errorf("could not find the root of the monorepo: %s", startDir)
 		}
 		startDir = parentDir
 	}
@@ -238,15 +222,10 @@ func CreatePackageFromPath(path string, isRoot bool) (*Package, error) {
 
 // GetPackages gets all packages in the current monorepo, regardless of the cwd
 func GetPackages(cwd string) ([]Package, error) {
-	cwd, err := expandPath(cwd)
+	println("cwd: ", cwd)
 
 	// save the original cwd
 	ogCwd := cwd
-
-	if err != nil {
-		return nil, err
-	}
-
 	// find the root of the monorepo
 	for {
 		if _, err := os.Stat(filepath.Join(cwd, "package.json")); err == nil {
@@ -254,7 +233,7 @@ func GetPackages(cwd string) ([]Package, error) {
 		}
 		parentDir := filepath.Dir(cwd)
 		if parentDir == cwd {
-			return nil, fmt.Errorf("could not find the root of the monorepo")
+			return nil, fmt.Errorf("could not find the root of the monorepo: %s", ogCwd)
 		}
 		cwd = parentDir
 	}

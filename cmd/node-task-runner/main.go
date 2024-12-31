@@ -28,7 +28,11 @@ func main() {
 			return
 		}
 	}
-	settings := app.NewSettings(app.WithCwd(flags.Cwd), app.WithDebug(flags.Debug))
+	settings, err := app.NewSettings(app.WithCwd(flags.Cwd), app.WithDebug(flags.Debug))
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error creating settings: %v\n", err)
+		return
+	}
 	ctx := app.NewSettingsContext(context.Background(), settings)
 	app.Run(ctx)
 }
