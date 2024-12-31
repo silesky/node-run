@@ -38,10 +38,7 @@ func NewSettings(opts ...Option) (Settings, error) {
 		opt(settings)
 	}
 	err := ValidateSettings(settings)
-	if err != nil {
-		return *settings, err
-	}
-	return *settings, nil
+	return *settings, err
 }
 
 // WithCwd sets the Cwd field on the Settings struct
