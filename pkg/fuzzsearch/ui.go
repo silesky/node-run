@@ -82,10 +82,11 @@ func (m TeaCommandModel) View() string {
 		}
 
 		// Format the line for the current command
-		line := fmt.Sprintf("%s [%s] %s - %s", cursor, cmd.PackageName, cmd.Name, cmd.Command)
+		line := fmt.Sprintf("%s [%s] %s (%s)",
+			cursor, cmd.PackageName, m.styles.blue.Render(cmd.Name), m.styles.gray.Render(cmd.Command))
 		line = strings.Replace(line, cursor, "", 1)
 		if m.cursor == i {
-			lines.WriteString(cursor + m.styles.selected.Render(line))
+			lines.WriteString(cursor + m.styles.magenta.Render(line))
 		} else {
 			lines.WriteString(cursor + line)
 		}
@@ -95,13 +96,13 @@ func (m TeaCommandModel) View() string {
 
 	// if no results, show no results found. otherwise, only show results message if filter is active.
 	if len(m.filtered) == 0 {
-		lines.WriteString("\n" + m.styles.helpText.Render("No results found.") + "\n")
+		lines.WriteString("\n" + m.styles.gray.Render("No results found.") + "\n")
 	} else if len(m.filtered) != len(m.commands) {
 		filterCommand := fmt.Sprintf("Displaying %d of %d results", len(m.filtered), len(m.commands))
-		lines.WriteString("\n" + m.styles.helpText.Render(filterCommand))
+		lines.WriteString("\n" + m.styles.gray.Render(filterCommand))
 	}
 
-	quitHelp := m.styles.helpText.Render("Press q to quit.")
+	quitHelp := m.styles.gray.Render("Press q to quit.")
 	lines.WriteString("\n\n" + quitHelp + "\n")
 	return m.styles.container.Render(lines.String())
 }
@@ -121,20 +122,23 @@ func filterCommands(commands []Command, query string) []Command {
 }
 
 type Styles struct {
-	selected    lipgloss.Style
-	filterInput lipgloss.Style
-	container   lipgloss.Style
-	helpText    lipgloss.Style
+	magenta   lipgloss.Style
+	container lipgloss.Style
+	gray      lipgloss.Style
+	blue      lipgloss.Style
 }
 
 func newStyles() Styles {
-	hotPink := lipgloss.Color("205")
-	darkGray := lipgloss.Color("#A9A9A9")
+	// https://hexdocs.pm/color_palette/ansi_color_codes.html
+	magenta := lipgloss.Color("205")
+	charcoal := lipgloss.Color("236")
+	blue := lipgloss.Color("20")
+
 	return Styles{
-		selected:    lipgloss.NewStyle().Foreground(hotPink),
-		filterInput: lipgloss.NewStyle().Foreground(hotPink),
-		container:   lipgloss.NewStyle(),
-		helpText:    lipgloss.NewStyle().Foreground(darkGray),
+		magenta:   lipgloss.NewStyle().Foreground(magenta),
+		container: lipgloss.NewStyle(),
+		gray:      lipgloss.NewStyle().Foreground(charcoal),
+		blue:      lipgloss.NewStyle().Foreground(blue),
 	}
 }
 
