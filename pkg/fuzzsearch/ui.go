@@ -55,13 +55,12 @@ func (m *TeaCommandModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "backspace":
 			m.input, cmd = m.input.Update(msg)
 			m.filtered = filterCommands(m.commands, m.input.Value())
-			if m.cursor >= len(m.filtered) {
-				m.cursor = len(m.filtered) - 1
-			}
+			m.cursor = 0 // reset cursor to the first command
 
 		default:
 			m.input, cmd = m.input.Update(msg)
 			m.filtered = filterCommands(m.commands, m.input.Value())
+			m.cursor = 0 // reset cursor to the first command
 		}
 	}
 
@@ -94,11 +93,16 @@ func (m TeaCommandModel) View() string {
 		lines.WriteString("\n")
 	}
 
+	// if no results, show no results found. otherwise, only show results message if filter is active.
 	if len(m.filtered) == 0 {
-		lines.WriteString("No results found.\n")
+		lines.WriteString("\n" + m.styles.helpText.Render("No results found.") + "\n")
+	} else if len(m.filtered) != len(m.commands) {
+		filterCommand := fmt.Sprintf("Displaying %d of %d results", len(m.filtered), len(m.commands))
+		lines.WriteString("\n" + m.styles.helpText.Render(filterCommand))
 	}
 
-	lines.WriteString("\nPress q to quit.\n")
+	quitHelp := m.styles.helpText.Render("Press q to quit.")
+	lines.WriteString("\n\n" + quitHelp + "\n")
 	return m.styles.container.Render(lines.String())
 }
 
@@ -120,14 +124,17 @@ type Styles struct {
 	selected    lipgloss.Style
 	filterInput lipgloss.Style
 	container   lipgloss.Style
+	helpText    lipgloss.Style
 }
 
 func newStyles() Styles {
 	hotPink := lipgloss.Color("205")
+	darkGray := lipgloss.Color("#A9A9A9")
 	return Styles{
 		selected:    lipgloss.NewStyle().Foreground(hotPink),
 		filterInput: lipgloss.NewStyle().Foreground(hotPink),
 		container:   lipgloss.NewStyle(),
+		helpText:    lipgloss.NewStyle().Foreground(darkGray),
 	}
 }
 
@@ -138,7 +145,6 @@ func DisplayCommandSelector(commands []Command) (*Command, error) {
 	ti.Focus()
 	ti.CharLimit = 156
 	ti.Width = 20
-	ti.Cursor.Blink = true
 
 	m := &TeaCommandModel{
 		commands: commands,
