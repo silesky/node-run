@@ -171,6 +171,7 @@ func sortByClosedToCwd(packagePaths []string, cwd string) []string {
 		b := strings.Replace(packagePaths[bIdx], "package.json", "", 1)
 
 		// Check if 'a' is closer to 'cwd' than 'b'
+		fmt.Printf("Comparing %s and %s\n", a, b)
 		aIsSubdir := isSubdirectory(a, cwd)
 		bIsSubdir := isSubdirectory(b, cwd)
 
