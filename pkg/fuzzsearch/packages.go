@@ -1,4 +1,4 @@
-package app
+package fuzzsearch
 
 import (
 	"encoding/json"
@@ -118,6 +118,23 @@ func findMonorepoRoot(startDir string) (string, error) {
 		}
 		startDir = parentDir
 	}
+}
+
+type Package struct {
+	Name    string
+	Scripts map[string]string
+}
+
+func CreatePackageFromPath(path string) (*Package, error) {
+	pkgJson, err := parsePkgJsonFile(path)
+	if err != nil {
+		return nil, err
+	}
+
+	return &Package{
+		Name:    pkgJson.Name,
+		Scripts: pkgJson.Scripts,
+	}, nil
 }
 
 // GetPackages gets all packages in the current monorepo, regardless of the cwd

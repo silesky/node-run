@@ -2,6 +2,7 @@ package fuzzsearch
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"node-task-runner/pkg/logger"
 	"os"
@@ -19,8 +20,13 @@ type Command struct {
 }
 
 // Get commands from the scripts key and return them
-func GetCommandsFromPaths(pkgJsonPaths []string) (*Command, error) {
-	commands := parseCommandsFromFiles(pkgJsonPaths)
+func GetCommandsFromPaths(cwd string) (*Command, error) {
+	packages, err := GetPackages(cwd)
+	if err != nil {
+		return nil, fmt.Errorf("could not get packages: %v", err)
+	}
+	logger.Debugf("Found packages: %#v\n", packages)
+	commands := parseCommandsFromFiles(packages)
 	selectedCommand, err := displayCommandSelector(commands)
 	if err != nil {
 		return nil, err

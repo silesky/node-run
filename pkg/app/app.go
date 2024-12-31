@@ -11,23 +11,16 @@ import (
 func Run(ctx context.Context) {
 	settings := FromSettingsContext(ctx)
 	logger.SetDebug(settings.Debug)
-	currentDirectory := settings.Cwd
-	if currentDirectory == "" {
+	cwd := settings.Cwd
+	if cwd == "" {
 		var err error
-		currentDirectory, err = os.Getwd()
+		cwd, err = os.Getwd()
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Error getting current directory: %v\n", err)
 			return
 		}
 	}
-	logger.Debugf("Current directory: %s", currentDirectory)
-	packages, err := GetPackages(currentDirectory)
+	logger.Debugf("Current directory: %s", cwd)
 
-	// make an anonymous struct
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error looking for packages: %v\n", err)
-		return
-	}
-	logger.Debugf("Found packages: %#v\n", packages)
-	fuzzsearch.GetCommandsFromPaths(packages)
+	fuzzsearch.GetCommandsFromPaths(cwd)
 }
