@@ -22,6 +22,7 @@ type TeaCommandModel struct {
 func (m *TeaCommandModel) Init() tea.Cmd {
 	return nil
 }
+
 // Init is required implementation
 func (m *TeaCommandModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
@@ -49,10 +50,8 @@ func (m *TeaCommandModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.cursor++
 			}
 
-		case "left"
-		case "right":
+		case "left", "right":
 			// do nothing
-
 
 		case "backspace":
 			if len(m.input) > 0 {
