@@ -138,6 +138,7 @@ func DisplayCommandSelector(commands []Command) (*Command, error) {
 	ti.Focus()
 	ti.CharLimit = 156
 	ti.Width = 20
+	ti.Cursor.Blink = true
 
 	m := &TeaCommandModel{
 		commands: commands,
