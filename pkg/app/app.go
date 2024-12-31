@@ -8,6 +8,7 @@ import (
 	"node-task-runner/pkg/logger"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 )
 
@@ -89,6 +90,10 @@ func findAllPackageJSONs(startDir string) ([]string, error) {
 
 	// get the workspaces array in the root package.json
 	packageJSONPaths, err := parseWorkspacesArray(monorepoRoot)
+
+	// append the root package.json
+	packageJSONPaths = append(packageJSONPaths, filepath.Join(monorepoRoot, "package.json"))
+
 	if err != nil {
 		return nil, err
 	}
@@ -121,6 +126,10 @@ func findMonorepoRoot(startDir string) (string, error) {
 // GetPackages gets all packages in the current monorepo, regardless of the cwd
 func GetPackages(cwd string) ([]string, error) {
 	cwd, err := expandPath(cwd)
+
+	// save the original cwd
+	ogCwd := cwd
+
 	if err != nil {
 		return nil, err
 	}
@@ -137,7 +146,50 @@ func GetPackages(cwd string) ([]string, error) {
 		cwd = parentDir
 	}
 
-	return findAllPackageJSONs(cwd)
+	if pkgs, err := findAllPackageJSONs(cwd); err != nil {
+		return nil, err
+	} else {
+		return sortByClosedToCwd(pkgs, ogCwd), nil
+	}
+}
+
+func normalizePath(path string) string {
+	return strings.TrimSuffix(path, string(filepath.Separator))
+}
+
+// _isSubdirectory checks if subdir is a subdirectory of parent.
+func isSubdirectory(parent, subdir string) bool {
+	parent = normalizePath(parent)
+	subdir = normalizePath(subdir)
+	res := strings.Contains(subdir, parent)
+	return res
+}
+
+func sortByClosedToCwd(packagePaths []string, cwd string) []string {
+	sort.Slice(packagePaths, func(aIdx, bIdx int) bool {
+		a := strings.Replace(packagePaths[aIdx], "package.json", "", 1)
+		b := strings.Replace(packagePaths[bIdx], "package.json", "", 1)
+
+		// Check if 'a' is closer to 'cwd' than 'b'
+		aIsSubdir := isSubdirectory(a, cwd)
+		bIsSubdir := isSubdirectory(b, cwd)
+
+		if aIsSubdir && !bIsSubdir {
+			fmt.Printf("A is subdirectory: %s\n", a)
+			return true
+		}
+		if !aIsSubdir && bIsSubdir {
+			return false
+		}
+
+		if aIsSubdir && bIsSubdir {
+			fmt.Printf("Both are subdirectories: %s, %s\n", a, b)
+		}
+
+		// If both are subdirectories or neither is, compare their lengths
+		return len(a) > len(b)
+	})
+	return packagePaths
 }
 
 func Run(ctx context.Context) {
