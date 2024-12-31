@@ -170,25 +170,18 @@ func sortByClosedToCwd(packagePaths []string, cwd string) []string {
 		a := strings.Replace(packagePaths[aIdx], "package.json", "", 1)
 		b := strings.Replace(packagePaths[bIdx], "package.json", "", 1)
 
-		// Check if 'a' is closer to 'cwd' than 'b'
-		fmt.Printf("Comparing %s and %s\n", a, cwd)
 		aIsSubdir := isSubdirectory(a, cwd)
 		bIsSubdir := isSubdirectory(b, cwd)
 
 		if aIsSubdir && !bIsSubdir {
-			fmt.Printf("A is subdirectory: %s\n", a)
 			return true
 		}
 		if !aIsSubdir && bIsSubdir {
 			return false
 		}
 
-		if aIsSubdir && bIsSubdir {
-			fmt.Printf("Both are subdirectories: %s, %s\n", a, b)
-		}
-
-		// If both are subdirectories or neither is, compare their lengths
-		return a < b
+		// if both are subdirectories (e.g the monorepo root, the shortest path should be first)
+		return len(a) > len(b)
 	})
 	return packagePaths
 }
