@@ -25,7 +25,8 @@ func NewSettings(opts ...Option) Settings {
 // WithCwd sets the Cwd field on the Settings struct
 func WithCwd(cwd string) Option {
 	return func(s *Settings) {
-		s.Cwd = cwd
+		// check if cwd is a valid directory
+
 	}
 }
 
