@@ -76,8 +76,13 @@ func (m *TeaCommandModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m TeaCommandModel) View() string {
 	var lines strings.Builder
 
-	lines.WriteString("\n Filter: ")
-	lines.WriteString(m.styles.filterInput.Render(m.input))
+	lines.WriteString("\nFilter: ")
+
+	cursorStyle := ""
+	if len(strings.TrimSpace(m.input)) == 0 {
+		cursorStyle = "|"
+	}
+	lines.WriteString(cursorStyle + m.styles.filterInput.Render(m.input))
 	lines.WriteString("\n\n")
 
 	for i, cmd := range m.filtered {
@@ -103,7 +108,7 @@ func (m TeaCommandModel) View() string {
 	}
 
 	lines.WriteString("\nPress q to quit.\n")
-	return lines.String()
+	return m.styles.container.Render(lines.String())
 }
 
 // filterCommands filters commands based on user input
@@ -123,13 +128,20 @@ func filterCommands(commands []Command, query string) []Command {
 type Styles struct {
 	selected    lipgloss.Style
 	filterInput lipgloss.Style
+	container   lipgloss.Style
 }
 
 func newStyles() Styles {
 	hotPink := lipgloss.Color("205")
+	// Define a style with a border
+	// border := lipgloss.NewStyle().
+	// 	Border(lipgloss.RoundedBorder()).
+	// 	BorderBottom(true)
+
 	return Styles{
 		selected:    lipgloss.NewStyle().Foreground(hotPink),
 		filterInput: lipgloss.NewStyle().Foreground(hotPink),
+		container:   lipgloss.NewStyle(),
 	}
 }
 
