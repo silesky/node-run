@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 )
@@ -13,18 +14,19 @@ type TeaCommandModel struct {
 	commands []Command
 	filtered []Command
 	cursor   int
-	input    string
+	input    textinput.Model
 	quitting bool
 	styles   Styles
 }
 
 // Init is required implementation
 func (m *TeaCommandModel) Init() tea.Cmd {
-	return nil
+	return textinput.Blink
 }
 
-// Init is required implementation
+// Update is required implementation
 func (m *TeaCommandModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	var cmd tea.Cmd
 	switch msg := msg.(type) {
 
 	case tea.KeyMsg:
@@ -34,11 +36,11 @@ func (m *TeaCommandModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.quitting = true
 			return m, tea.Quit
 
-		// return the selected varlua and quit
+		// return the selected value and quit
 		case "enter":
 			return m, tea.Quit
 
-			// move the cursor up
+		// move the cursor up
 		case "up":
 			if m.cursor > 0 {
 				m.cursor--
@@ -50,26 +52,20 @@ func (m *TeaCommandModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.cursor++
 			}
 
-		case "left", "right", "tab":
-			// do nothing
-
 		case "backspace":
-			if len(m.input) > 0 {
-				m.input = m.input[:len(m.input)-1]
-				m.filtered = filterCommands(m.commands, m.input)
-				if m.cursor >= len(m.filtered) {
-					m.cursor = len(m.filtered) - 1
-				}
+			m.input, cmd = m.input.Update(msg)
+			m.filtered = filterCommands(m.commands, m.input.Value())
+			if m.cursor >= len(m.filtered) {
+				m.cursor = len(m.filtered) - 1
 			}
 
 		default:
-			// if filtering using the search box
-			m.input += msg.String()
-			m.filtered = filterCommands(m.commands, m.input)
+			m.input, cmd = m.input.Update(msg)
+			m.filtered = filterCommands(m.commands, m.input.Value())
 		}
 	}
 
-	return m, nil
+	return m, cmd
 }
 
 // View is required implementation for tea
@@ -77,12 +73,7 @@ func (m TeaCommandModel) View() string {
 	var lines strings.Builder
 
 	lines.WriteString("\nFilter: ")
-
-	cursorStyle := ""
-	if len(strings.TrimSpace(m.input)) == 0 {
-		cursorStyle = "|"
-	}
-	lines.WriteString(cursorStyle + m.styles.filterInput.Render(m.input))
+	lines.WriteString(m.input.View())
 	lines.WriteString("\n\n")
 
 	for i, cmd := range m.filtered {
@@ -133,11 +124,6 @@ type Styles struct {
 
 func newStyles() Styles {
 	hotPink := lipgloss.Color("205")
-	// Define a style with a border
-	// border := lipgloss.NewStyle().
-	// 	Border(lipgloss.RoundedBorder()).
-	// 	BorderBottom(true)
-
 	return Styles{
 		selected:    lipgloss.NewStyle().Foreground(hotPink),
 		filterInput: lipgloss.NewStyle().Foreground(hotPink),
@@ -145,11 +131,18 @@ func newStyles() Styles {
 	}
 }
 
-// commandSelector displays the command selector UI
+// DisplayCommandSelector displays the command selector UI
 func DisplayCommandSelector(commands []Command) (*Command, error) {
+	ti := textinput.New()
+	ti.Placeholder = "Filter commands"
+	ti.Focus()
+	ti.CharLimit = 156
+	ti.Width = 20
+
 	m := &TeaCommandModel{
 		commands: commands,
 		filtered: commands, // Start with all commands
+		input:    ti,
 		styles:   newStyles(),
 	}
 
