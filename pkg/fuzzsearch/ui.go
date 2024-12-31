@@ -134,7 +134,7 @@ func newStyles() Styles {
 // DisplayCommandSelector displays the command selector UI
 func DisplayCommandSelector(commands []Command) (*Command, error) {
 	ti := textinput.New()
-	ti.Placeholder = "Filter commands"
+	ti.Placeholder = "Type to filter"
 	ti.Focus()
 	ti.CharLimit = 156
 	ti.Width = 20
