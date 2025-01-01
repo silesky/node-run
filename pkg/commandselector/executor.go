@@ -33,7 +33,6 @@ func (ir *InteractiveRunner) Start(cmd string) {
 
 	for scanner.Scan() {
 		input := scanner.Text()
-		// Execute the command
 		if input == "r" {
 			if err := runCommand(cmd); err != nil {
 				fmt.Println("Error:", err)
@@ -82,8 +81,9 @@ func createCLICommand(proj Project, command Command) string {
 }
 func Executor(command Command, project Project) {
 	cmd := createCLICommand(project, command)
+	// run on startup
 	if err := runCommand(cmd); err != nil {
-		fmt.Println("Error:", err)
+		logger.Debug(err)
 	}
 	ir := NewInteractiveRunner()
 	ir.Start(cmd)
