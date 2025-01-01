@@ -12,10 +12,10 @@ import (
 )
 
 type Package struct {
-	Path   string
-	IsRoot bool
-	Type   PackageManager
-	Json   PkgJson
+	Path    string
+	IsRoot  bool
+	Manager PackageManager
+	Json    PkgJson
 }
 
 type PkgJson struct {
@@ -253,10 +253,10 @@ func CreatePackageFromPath(path string, isRoot bool) (*Package, error) {
 	}
 
 	return &Package{
-		Path:   path,
-		IsRoot: isRoot,
-		Json:   *pkgJson,
-		Type:   pkgManager,
+		Path:    path,
+		IsRoot:  isRoot,
+		Json:    *pkgJson,
+		Manager: pkgManager,
 	}, nil
 }
 
