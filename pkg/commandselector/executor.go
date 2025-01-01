@@ -26,7 +26,7 @@ func (ir *InteractiveRunner) Start(cmd string) {
 	fmt.Println("  r - Rerun the last command")
 	fmt.Println("  q - Quit the runner")
 
-	fmt.Println("Enter text (Ctrl+D to end):")
+	fmt.Println("Input command:")
 	if err := scanner.Err(); err != nil {
 		fmt.Println("Error reading input:", err)
 	}
