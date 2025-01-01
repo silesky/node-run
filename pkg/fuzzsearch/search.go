@@ -49,7 +49,6 @@ func GetCommandsFromPaths(cwd string) (*Command, error) {
 	if err != nil {
 		return nil, fmt.Errorf("unable to get packages: %v. cwd: %s", err, cwd)
 	}
-	logger.Debugf("Found packages: %#v\n", packages)
 	commands := parseAllCommands(packages)
 	selectedCommand, err := displayCommandSelector(commands)
 	if err != nil {
