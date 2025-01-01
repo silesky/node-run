@@ -109,6 +109,8 @@ func (m TeaCommandModel) View() string {
 
 // filterCommands filters commands based on user input
 func filterCommands(commands []Command, query string) []Command {
+	// create an _empty_ slice, not a nil slice (var []Command{} creates a nil slice)
+	// https://stackoverflow.com/questions/49104157/what-is-the-point-of-having-nil-slice-and-empty-slice-in-golang
 	result := []Command{}
 	query = strings.TrimSpace(query)
 	tokens := strings.Fields(strings.ToLower(query)) // Split query into tokens

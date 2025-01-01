@@ -33,7 +33,7 @@ func TestFilterCommands(t *testing.T) {
 		},
 		{
 			query:    "nonexistent",
-			expected: []Command{},
+			expected: nil,
 		},
 	}
 
