@@ -59,14 +59,14 @@ func (ir *InteractiveRunner) Start() {
 		}
 
 		// Execute the command
-		if err := ir.runCommand(input); err != nil {
+		if err := runCommand(input); err != nil {
 			fmt.Println("Error:", err)
 		}
 	}
 }
 
 // runCommand executes a shell command.
-func (ir *InteractiveRunner) runCommand(command string) error {
+func runCommand(command string) error {
 	logger.Debugf("Running CLI command: %s", command)
 	parts := strings.Fields(command)
 	if len(parts) == 0 {
@@ -95,5 +95,5 @@ func createCLICommand(proj Project, command Command) string {
 }
 func Executor(command Command, project Project) {
 	cmd := createCLICommand(project, command)
-	NewInteractiveRunner().runCommand(cmd)
+	runCommand(cmd)
 }
