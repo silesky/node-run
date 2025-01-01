@@ -12,9 +12,10 @@ import (
 )
 
 type Package struct {
-	Path   string
-	IsRoot bool
-	Json   PkgJson
+	Path    string
+	IsRoot  bool
+	Manager PackageManager
+	Json    PkgJson
 }
 
 type PkgJson struct {
@@ -29,22 +30,21 @@ type Command struct {
 }
 
 // Go doesn't have enums, so we use a type alias and a const block to simulate them
-type PackageManager int
+type PackageManager string
 
 const (
-	Npm PackageManager = iota
-	Yarn
-	Pnpm
+	Npm  PackageManager = "npm"
+	Yarn PackageManager = "yarn"
+	Pnpm PackageManager = "pnpm"
 )
 
-func (pm PackageManager) String() string {
-	// this elipsis means this is a fixed size array that is the same size as the enum
-	return [...]string{"npm", "yarn", "pnpm"}[pm]
+type Project struct {
+	Manager PackageManager
 }
 
 // Get commands from the scripts key and return them
 func GetCommandsFromPaths(cwd string) (*Command, error) {
-	packages, err := GetPackages(cwd)
+	packages, project, err := GetPackages(cwd)
 	if err != nil {
 		return nil, fmt.Errorf("unable to get packages: %v. cwd: %s", err, cwd)
 	}
@@ -53,7 +53,7 @@ func GetCommandsFromPaths(cwd string) (*Command, error) {
 	if err != nil {
 		return nil, err
 	}
-	logger.Debugf("Selected Command: %+v", selectedCommand)
+	logger.Debugf("Selected Command: %+v. Project: %v", selectedCommand, project)
 	return selectedCommand, nil
 }
 
@@ -73,7 +73,7 @@ func parseAllCommands(Packages []Package) []Command {
 			log.Printf("Error parsing JSON file %s: %v", path, err)
 			continue
 		}
-		packages = append(packages, *packageJSON)
+		packages = append(packages, packageJSON)
 	}
 	var commands []Command
 	for _, pkg := range packages {
@@ -96,19 +96,19 @@ func parseCommands(packageJson PkgJson) []Command {
 }
 
 // Parse package json
-func parsePkgJsonFile(path string) (*PkgJson, error) {
+func parsePkgJsonFile(path string) (PkgJson, error) {
 	file, err := os.ReadFile(path)
 	if err != nil {
-		return nil, err
+		return PkgJson{}, err
 	}
 
 	var packageJSON PkgJson
 	err = json.Unmarshal(file, &packageJSON)
 	if err != nil {
-		return nil, err
+		return PkgJson{}, err
 	}
 
-	return &packageJSON, nil
+	return packageJSON, nil
 }
 
 // hasWorkspacesArray checks if the package.json contains a workspaces array
@@ -192,7 +192,7 @@ func findAllPackageJSONs(startDir string) ([]Package, error) {
 		if err != nil {
 			return nil, err
 		}
-		packages = append(packages, *pkg)
+		packages = append(packages, pkg)
 	}
 	return packages, nil
 }
@@ -215,6 +215,20 @@ func findMonorepoRoot(startDir string) (string, error) {
 	}
 }
 
+func detectPackageManagerFromPackages(pkgs []Package) (PackageManager, error) {
+	var manager PackageManager
+	for _, pkg := range pkgs {
+		if pkg.IsRoot {
+			manager = pkg.Manager
+			break
+		}
+	}
+	if manager == "" {
+		return "", fmt.Errorf("could not detect project")
+	}
+	return manager, nil
+}
+
 func detectPackageManager(dirPath string) (PackageManager, error) {
 	const (
 		yarnLockfile    = "yarn.lock"
@@ -226,12 +240,12 @@ func detectPackageManager(dirPath string) (PackageManager, error) {
 	} else {
 		for _, entry := range contents {
 			switch entry.Name() {
+			case packageLockfile:
+				return Npm, nil
 			case yarnLockfile:
 				return Yarn, nil
 			case pnpmLockfile:
 				return Pnpm, nil
-			case packageLockfile:
-				return Npm, nil
 			}
 		}
 		return Npm, nil
@@ -239,25 +253,38 @@ func detectPackageManager(dirPath string) (PackageManager, error) {
 }
 
 // CreatePackageFromPath creates a Package struct from a package.json file
-func CreatePackageFromPath(path string, isRoot bool) (*Package, error) {
+func CreatePackageFromPath(path string, isRoot bool) (Package, error) {
 	pkgJson, err := parsePkgJsonFile(path)
 	if err != nil {
-		return nil, err
+		return Package{}, err
 	}
 
-	return &Package{
-		Path:   path,
-		IsRoot: isRoot,
-		Json:   *pkgJson,
+	pkgManager, err := detectPackageManager(filepath.Dir(path))
+	if err != nil {
+		return Package{}, err
+	}
+
+	return Package{
+		Path:    path,
+		IsRoot:  isRoot,
+		Json:    pkgJson,
+		Manager: pkgManager,
 	}, nil
 }
 
 // GetPackages gets all packages in the current monorepo, regardless of the cwd
-func GetPackages(cwd string) ([]Package, error) {
+func GetPackages(cwd string) ([]Package, Project, error) {
 	if pkgs, err := findAllPackageJSONs(cwd); err != nil {
-		return nil, fmt.Errorf("unable to find any package.jsons. are you sure you're running this inside a node package? %v", err)
+		return nil, Project{}, fmt.Errorf("are you sure you're running this inside a node package? %v", err)
 	} else {
-		return sortByClosedToCwd(pkgs, cwd), nil
+		manager, err := detectPackageManagerFromPackages(pkgs)
+		if err != nil {
+			return nil, Project{}, fmt.Errorf("cannot detect package manager type. %v", err)
+		}
+		proj := Project{
+			Manager: manager,
+		}
+		return sortByClosedToCwd(pkgs, cwd), proj, nil
 	}
 }
 
