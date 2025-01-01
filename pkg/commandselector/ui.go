@@ -83,7 +83,7 @@ func (m TeaCommandModel) View() string {
 
 		// Format the line for the current command
 		line := fmt.Sprintf("%s [%s] %s (%s)",
-			cursor, cmd.PackageName, m.styles.blue.Render(cmd.Name), m.styles.gray.Render(cmd.Command))
+			cursor, cmd.PackageName, m.styles.blue.Render(cmd.CommandName), m.styles.gray.Render(cmd.CommandValue))
 		line = strings.Replace(line, cursor, "", 1)
 		if m.cursor == i {
 			lines.WriteString(cursor + m.styles.magenta.Render(line))
@@ -113,8 +113,8 @@ func filterCommands(commands []Command, query string) []Command {
 	query = strings.TrimSpace(query)
 	for _, cmd := range commands {
 		if strings.Contains(strings.ToLower(cmd.PackageName), strings.ToLower(query)) ||
-			strings.Contains(strings.ToLower(cmd.Name), strings.ToLower(query)) ||
-			strings.Contains(strings.ToLower(cmd.Command), strings.ToLower(query)) {
+			strings.Contains(strings.ToLower(cmd.CommandName), strings.ToLower(query)) ||
+			strings.Contains(strings.ToLower(cmd.CommandValue), strings.ToLower(query)) {
 			result = append(result, cmd)
 		}
 	}
@@ -143,7 +143,7 @@ func newStyles() Styles {
 }
 
 // DisplayCommandSelector displays the command selector UI
-func DisplayCommandSelector(commands []Command) (*Command, error) {
+func DisplayCommandSelector(commands []Command) (Command, error) {
 	ti := textinput.New()
 	ti.Placeholder = "Type to filter"
 	ti.Focus()
@@ -159,12 +159,12 @@ func DisplayCommandSelector(commands []Command) (*Command, error) {
 
 	program := tea.NewProgram(m)
 	if _, err := program.Run(); err != nil {
-		return nil, err
+		return Command{}, err
 	}
 
 	if m.cursor >= 0 && m.cursor < len(m.filtered) && !m.quitting {
-		return &m.filtered[m.cursor], nil
+		return m.filtered[m.cursor], nil
 	}
 
-	return nil, fmt.Errorf("no command selected")
+	return Command{}, fmt.Errorf("no command selected")
 }

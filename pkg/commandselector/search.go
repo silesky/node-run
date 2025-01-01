@@ -21,12 +21,14 @@ type Package struct {
 type PkgJson struct {
 	Name    string            `json:"name"`
 	Scripts map[string]string `json:"scripts"`
+	Dir     string
 }
 
 type Command struct {
-	PackageName string
-	Name        string
-	Command     string
+	PackageName  string
+	CommandName  string
+	CommandValue string
+	PackageDir   string
 }
 
 // Go doesn't have enums, so we use a type alias and a const block to simulate them
@@ -43,22 +45,22 @@ type Project struct {
 }
 
 // Get commands from the scripts key and return them
-func RunCommandSelectorPrompt(cwd string) (*Command, error) {
+func RunCommandSelectorPrompt(cwd string) (Command, Project, error) {
 	packages, project, err := GetPackages(cwd)
 	if err != nil {
-		return nil, fmt.Errorf("unable to get packages: %v. cwd: %s", err, cwd)
+		return Command{}, Project{}, fmt.Errorf("unable to get packages: %v. cwd: %s", err, cwd)
 	}
 	commands := parseAllCommands(packages)
 	selectedCommand, err := displayCommandSelector(commands)
 	if err != nil {
-		return nil, err
+		return Command{}, Project{}, err
 	}
 	logger.Debugf("Selected Command: %+v. Project: %v", selectedCommand, project)
-	return selectedCommand, nil
+	return selectedCommand, project, nil
 }
 
 // Display command selector menu (returns user input)
-func displayCommandSelector(commands []Command) (*Command, error) {
+func displayCommandSelector(commands []Command) (Command, error) {
 	selectedCmd, err := DisplayCommandSelector(commands)
 	return selectedCmd, err
 }
@@ -87,9 +89,10 @@ func parseCommands(packageJson PkgJson) []Command {
 	var commands []Command
 	for key, value := range packageJson.Scripts {
 		commands = append(commands, Command{
-			PackageName: packageJson.Name,
-			Name:        key,
-			Command:     value,
+			PackageName:  packageJson.Name,
+			CommandName:  key,
+			CommandValue: value,
+			PackageDir:   packageJson.Dir,
 		})
 	}
 	return commands
@@ -107,7 +110,7 @@ func parsePkgJsonFile(path string) (PkgJson, error) {
 	if err != nil {
 		return PkgJson{}, err
 	}
-
+	packageJSON.Dir = filepath.Dir(path)
 	return packageJSON, nil
 }
 

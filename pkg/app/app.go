@@ -20,11 +20,12 @@ func Run(settings Settings) {
 	}
 	logger.Debugf("Current directory: %s", cwd)
 
-	selectedCommand, err := commandselector.RunCommandSelectorPrompt(cwd)
+	selectedCommand, project, err := commandselector.RunCommandSelectorPrompt(cwd)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error getting commands: %v\n", err)
 		return
 	} else {
+		commandselector.Executor(selectedCommand, project)
 		fmt.Printf("Executing: %v", selectedCommand)
 	}
 }
