@@ -32,7 +32,6 @@ func (ir *InteractiveRunner) Start() {
 	for {
 		fmt.Print("runner> ")
 
-		// Read user input
 		input, err := reader.ReadString('\n')
 		if err != nil {
 			fmt.Println("Error reading input:", err)
