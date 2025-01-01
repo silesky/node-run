@@ -25,7 +25,7 @@ func Run(settings Settings) {
 		fmt.Fprintf(os.Stderr, "Error getting commands: %v\n", err)
 		return
 	} else {
-		fmt.Printf("Executing: %v", selectedCommand)
+		logger.Debugf("Executing: %v", selectedCommand)
 		commandselector.Executor(selectedCommand, project)
 	}
 }
