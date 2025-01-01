@@ -24,7 +24,7 @@ func (ir *InteractiveRunner) Start(cmd string) {
 	fmt.Println("\n-------------------------\nRerun the last command")
 	fmt.Println("Commands:")
 	fmt.Println("  r - Rerun the last command")
-	fmt.Println("  exit - Exit the runner")
+	fmt.Println("  q - Quit the runner")
 
 	fmt.Println("Enter text (Ctrl+D to end):")
 	if err := scanner.Err(); err != nil {
@@ -44,7 +44,7 @@ func (ir *InteractiveRunner) Start(cmd string) {
 		input = strings.TrimSpace(input)
 
 		// Handle exit
-		if input == "exit" {
+		if input == "q" {
 			fmt.Println("Exiting Interactive Runner.")
 			break
 		}
