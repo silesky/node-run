@@ -14,6 +14,7 @@ import (
 type Package struct {
 	Path   string
 	IsRoot bool
+	Type   PackageManager
 	Json   PkgJson
 }
 
@@ -216,8 +217,37 @@ func findMonorepoRoot(startDir string) (string, error) {
 	}
 }
 
+func detectPackageManager(dirPath string) (PackageManager, error) {
+	const (
+		yarnLockfile    = "yarn.lock"
+		pnpmLockfile    = "pnpm-lock.yaml"
+		packageLockfile = "package-lock.json"
+	)
+	if contents, err := os.ReadDir(dirPath); err != nil {
+		return Npm, err
+	} else {
+		for _, entry := range contents {
+			switch entry.Name() {
+			case yarnLockfile:
+				return Yarn, nil
+			case pnpmLockfile:
+				return Pnpm, nil
+			case packageLockfile:
+				return Npm, nil
+			}
+		}
+		return Npm, nil
+	}
+}
+
+// CreatePackageFromPath creates a Package struct from a package.json file
 func CreatePackageFromPath(path string, isRoot bool) (*Package, error) {
 	pkgJson, err := parsePkgJsonFile(path)
+	if err != nil {
+		return nil, err
+	}
+
+	pkgManager, err := detectPackageManager(filepath.Dir(path))
 	if err != nil {
 		return nil, err
 	}
@@ -226,6 +256,7 @@ func CreatePackageFromPath(path string, isRoot bool) (*Package, error) {
 		Path:   path,
 		IsRoot: isRoot,
 		Json:   *pkgJson,
+		Type:   pkgManager,
 	}, nil
 }
 
