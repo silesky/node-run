@@ -2,7 +2,7 @@ package app
 
 import (
 	"fmt"
-	"node-task-runner/pkg/fuzzsearch"
+	"node-task-runner/pkg/commandselector"
 	"node-task-runner/pkg/logger"
 	"os"
 )
@@ -20,7 +20,7 @@ func Run(settings Settings) {
 	}
 	logger.Debugf("Current directory: %s", cwd)
 
-	selectedCommand, err := fuzzsearch.GetCommandsFromPaths(cwd)
+	selectedCommand, err := commandselector.RunCommandSelectorPrompt(cwd)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error getting commands: %v\n", err)
 		return

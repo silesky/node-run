@@ -1,4 +1,4 @@
-package fuzzsearch
+package commandselector
 
 import (
 	"encoding/json"
@@ -43,7 +43,7 @@ type Project struct {
 }
 
 // Get commands from the scripts key and return them
-func GetCommandsFromPaths(cwd string) (*Command, error) {
+func RunCommandSelectorPrompt(cwd string) (*Command, error) {
 	packages, project, err := GetPackages(cwd)
 	if err != nil {
 		return nil, fmt.Errorf("unable to get packages: %v. cwd: %s", err, cwd)

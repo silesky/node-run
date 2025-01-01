@@ -1,4 +1,4 @@
-package fuzzsearch
+package commandselector
 
 import (
 	"fmt"

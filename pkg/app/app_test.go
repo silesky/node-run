@@ -1,7 +1,6 @@
 package app
 
 import (
-	"context"
 	"os"
 	"path/filepath"
 	"testing"
@@ -45,8 +44,7 @@ func TestRun(t *testing.T) {
 	}
 
 	settings, _ := NewSettings(WithCwd(tmpDir), WithDebug(true))
-	ctx := NewSettingsContext(context.Background(), settings)
 
-	Run(ctx)
+	Run(settings)
 	// Add assertions as needed to verify the behavior of Run
 }
