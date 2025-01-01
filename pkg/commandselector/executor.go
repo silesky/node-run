@@ -10,32 +10,34 @@ import (
 	"strings"
 )
 
-// InteractiveRunner manages the interactive command execution loop.
+// InteractiveRunner represents the interactive command runner.
 type InteractiveRunner struct {
-	lastCommand string
 }
 
-// NewInteractiveRunner initializes a new InteractiveRunner instance.
 func NewInteractiveRunner() *InteractiveRunner {
 	return &InteractiveRunner{}
 }
 
 // Start begins the interactive command execution loop.
-func (ir *InteractiveRunner) Start() {
-	reader := bufio.NewReader(os.Stdin)
-
-	fmt.Println("Welcome to the Interactive Runner!")
+func (ir *InteractiveRunner) Start(cmd string) {
+	scanner := bufio.NewScanner(os.Stdin)
+	fmt.Println("\n-------------------------\nRerun the last command")
 	fmt.Println("Commands:")
 	fmt.Println("  r - Rerun the last command")
 	fmt.Println("  exit - Exit the runner")
 
-	for {
-		fmt.Print("runner> ")
+	fmt.Println("Enter text (Ctrl+D to end):")
+	if err := scanner.Err(); err != nil {
+		fmt.Println("Error reading input:", err)
+	}
 
-		input, err := reader.ReadString('\n')
-		if err != nil {
-			fmt.Println("Error reading input:", err)
-			continue
+	for scanner.Scan() {
+		input := scanner.Text()
+		// Execute the command
+		if input == "r" {
+			if err := runCommand(cmd); err != nil {
+				fmt.Println("Error:", err)
+			}
 		}
 
 		// Trim whitespace
@@ -47,21 +49,6 @@ func (ir *InteractiveRunner) Start() {
 			break
 		}
 
-		// Handle rerun last command
-		if input == "r" {
-			if ir.lastCommand == "" {
-				fmt.Println("No command to rerun.")
-				continue
-			}
-			input = ir.lastCommand
-		} else {
-			ir.lastCommand = input
-		}
-
-		// Execute the command
-		if err := runCommand(input); err != nil {
-			fmt.Println("Error:", err)
-		}
 	}
 }
 
@@ -95,5 +82,9 @@ func createCLICommand(proj Project, command Command) string {
 }
 func Executor(command Command, project Project) {
 	cmd := createCLICommand(project, command)
-	runCommand(cmd)
+	if err := runCommand(cmd); err != nil {
+		fmt.Println("Error:", err)
+	}
+	ir := NewInteractiveRunner()
+	ir.Start(cmd)
 }
