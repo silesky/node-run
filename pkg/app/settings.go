@@ -25,23 +25,19 @@ func expandPath(path string) (string, error) {
 type Settings struct {
 	Cwd   string
 	Debug bool
-	// Add more fields as needed
 }
 
-// Option is a function that sets an option on the Settings struct
 type Option func(*Settings)
 
-// NewSettings creates a new Settings struct with the provided options
 func NewSettings(opts ...Option) (Settings, error) {
 	settings := &Settings{}
 	for _, opt := range opts {
 		opt(settings)
 	}
-	err := ValidateSettings(settings)
+	err := settings.Validate()
 	return *settings, err
 }
 
-// WithCwd sets the Cwd field on the Settings struct
 func WithCwd(cwd string) Option {
 	return func(s *Settings) {
 		expanded, err := expandPath(cwd)
@@ -52,7 +48,6 @@ func WithCwd(cwd string) Option {
 	}
 }
 
-// WithDebug sets the Debug field on the Settings struct
 func WithDebug(debug bool) Option {
 	return func(s *Settings) {
 		s.Debug = debug
@@ -76,7 +71,7 @@ func FromSettingsContext(ctx context.Context) Settings {
 	return settings
 }
 
-func ValidateSettings(settings *Settings) error {
+func (settings *Settings) Validate() error {
 	if settings.Cwd != "" {
 		if _, err := os.Stat(settings.Cwd); err != nil {
 			return fmt.Errorf("--cwd is invalid: %v", settings.Cwd)
