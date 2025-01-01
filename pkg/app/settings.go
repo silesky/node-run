@@ -1,10 +1,8 @@
 package app
 
 import (
-	"context"
 	"fmt"
 	"log"
-	"node-task-runner/pkg/logger"
 	"os"
 	"path/filepath"
 	"strings"
@@ -52,23 +50,6 @@ func WithDebug(debug bool) Option {
 	return func(s *Settings) {
 		s.Debug = debug
 	}
-}
-
-type contextKey string
-
-const settingsKey contextKey = "settings"
-
-func NewSettingsContext(ctx context.Context, settings Settings) context.Context {
-	return context.WithValue(ctx, settingsKey, settings)
-}
-
-func FromSettingsContext(ctx context.Context) Settings {
-	settings, ok := ctx.Value(settingsKey).(Settings)
-	if !ok {
-		panic("invariant: settings does not exist")
-	}
-	logger.Debugf("Settings: %v", settings)
-	return settings
 }
 
 func (settings *Settings) Validate() error {

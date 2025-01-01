@@ -1,15 +1,13 @@
 package app
 
 import (
-	"context"
 	"fmt"
 	"node-task-runner/pkg/fuzzsearch"
 	"node-task-runner/pkg/logger"
 	"os"
 )
 
-func Run(ctx context.Context) {
-	settings := FromSettingsContext(ctx)
+func Run(settings Settings) {
 	logger.SetDebug(settings.Debug)
 	cwd := settings.Cwd
 	if cwd == "" {

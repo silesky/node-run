@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"flag"
 	"fmt"
 	"node-task-runner/pkg/app"
@@ -33,8 +32,7 @@ func main() {
 		fmt.Fprintf(os.Stderr, "Error creating settings: %v\n", err)
 		return
 	}
-	ctx := app.NewSettingsContext(context.Background(), settings)
-	app.Run(ctx)
+	app.Run(settings)
 }
 
 func usage() {
