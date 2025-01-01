@@ -109,15 +109,28 @@ func (m TeaCommandModel) View() string {
 
 // filterCommands filters commands based on user input
 func filterCommands(commands []Command, query string) []Command {
-	var result []Command
+	result := []Command{}
 	query = strings.TrimSpace(query)
+	tokens := strings.Fields(strings.ToLower(query)) // Split query into tokens
+
 	for _, cmd := range commands {
-		if strings.Contains(strings.ToLower(cmd.PackageName), strings.ToLower(query)) ||
-			strings.Contains(strings.ToLower(cmd.CommandName), strings.ToLower(query)) ||
-			strings.Contains(strings.ToLower(cmd.CommandValue), strings.ToLower(query)) {
+		combinedFields := strings.ToLower(cmd.PackageName) + " " +
+			strings.ToLower(cmd.CommandName) + " " +
+			strings.ToLower(cmd.CommandValue)
+
+		matches := true
+		for _, token := range tokens {
+			if !strings.Contains(combinedFields, token) {
+				matches = false
+				break
+			}
+		}
+
+		if matches {
 			result = append(result, cmd)
 		}
 	}
+
 	return result
 }
 
