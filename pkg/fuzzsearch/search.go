@@ -28,6 +28,20 @@ type Command struct {
 	Command     string
 }
 
+// Go doesn't have enums, so we use a type alias and a const block to simulate them
+type PackageManager int
+
+const (
+	Npm PackageManager = iota
+	Yarn
+	Pnpm
+)
+
+func (pm PackageManager) String() string {
+	// this elipsis means this is a fixed size array that is the same size as the enum
+	return [...]string{"npm", "yarn", "pnpm"}[pm]
+}
+
 // Get commands from the scripts key and return them
 func GetCommandsFromPaths(cwd string) (*Command, error) {
 	packages, err := GetPackages(cwd)
@@ -201,11 +215,6 @@ func findMonorepoRoot(startDir string) (string, error) {
 		startDir = parentDir
 	}
 }
-
-// type Package struct {
-// 	Name    string
-// 	Scripts map[string]string
-// }
 
 func CreatePackageFromPath(path string, isRoot bool) (*Package, error) {
 	pkgJson, err := parsePkgJsonFile(path)
