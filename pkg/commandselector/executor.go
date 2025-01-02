@@ -36,11 +36,8 @@ func (ir *InteractiveRunner) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch msg.String() {
 		case "ctrl+c", "q":
 			return ir, tea.Quit
-		case "r":
+		case "r", "enter":
 			ir.runCommand()
-		case "enter":
-			ir.runCommand()
-		default:
 		}
 	}
 	return ir, nil
