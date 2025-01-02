@@ -45,7 +45,7 @@ func (ir *InteractiveRunner) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 // View renders the UI.
 func (ir *InteractiveRunner) View() string {
-	return fmt.Sprintf("Input command: %s\n\nCommands:\n  r - Rerun the command\n  q - Quit the runner\n\n %s", ir.command, ir.input)
+	return fmt.Sprintf("\n---------------------\nInteractive Mode\nInput command: %s\n\nCommands:\n  r - Rerun the command\n  q - Quit the runner\n\n %s", ir.command, ir.input)
 }
 
 // runCommand executes a shell command.
