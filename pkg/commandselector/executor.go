@@ -18,8 +18,10 @@ type InteractiveRunner struct {
 }
 
 // NewInteractiveRunner creates a new InteractiveRunner.
-func NewInteractiveRunner() *InteractiveRunner {
-	return &InteractiveRunner{}
+func NewInteractiveRunner(command string) *InteractiveRunner {
+	return &InteractiveRunner{
+		command: command,
+	}
 }
 
 // Init initializes the Bubble Tea program.
@@ -35,9 +37,9 @@ func (ir *InteractiveRunner) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "ctrl+c", "q":
 			return ir, tea.Quit
 		case "r":
-			ir.runCommand(ir.command)
+			ir.runCommand()
 		case "enter":
-			ir.runCommand(ir.command)
+			ir.runCommand()
 		default:
 		}
 	}
@@ -50,7 +52,8 @@ func (ir *InteractiveRunner) View() string {
 }
 
 // runCommand executes a shell command.
-func (ir *InteractiveRunner) runCommand(command string) {
+func (ir *InteractiveRunner) runCommand() {
+	command := ir.command
 	logger.Debugf("Running CLI command: %s", command)
 	parts := strings.Fields(command)
 	if len(parts) == 0 {
@@ -83,8 +86,9 @@ func createCLICommand(proj Project, command Command) string {
 
 func Executor(command Command, project Project) {
 	cmd := createCLICommand(project, command)
-	ir := NewInteractiveRunner()
+	ir := NewInteractiveRunner(cmd)
 	ir.command = cmd
+	ir.runCommand()
 	program := tea.NewProgram(ir)
 	if _, err := program.Run(); err != nil {
 		logger.Fatalf("%v", err)
