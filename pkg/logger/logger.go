@@ -25,3 +25,7 @@ func Debugf(format string, v ...interface{}) {
 		DebugLogger.Printf(format, v...)
 	}
 }
+
+func Fatalf(format string, v ...interface{}) {
+	DebugLogger.Fatalf(format, v...)
+}

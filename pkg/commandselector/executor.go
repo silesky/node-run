@@ -1,69 +1,70 @@
 package commandselector
 
 import (
-	"bufio"
 	"fmt"
 	"log"
 	"node-task-runner/pkg/logger"
 	"os"
 	"os/exec"
 	"strings"
+
+	tea "github.com/charmbracelet/bubbletea"
 )
 
 // InteractiveRunner represents the interactive command runner.
 type InteractiveRunner struct {
+	command string
+	input   string
 }
 
+// NewInteractiveRunner creates a new InteractiveRunner.
 func NewInteractiveRunner() *InteractiveRunner {
 	return &InteractiveRunner{}
 }
 
-// Start begins the interactive command execution loop.
-func (ir *InteractiveRunner) Start(cmd string) {
-	scanner := bufio.NewScanner(os.Stdin)
-	fmt.Println("\n-------------------------\nRerun the last command")
-	fmt.Println("Commands:")
-	fmt.Println("  r - Rerun the last command")
-	fmt.Println("  q - Quit the runner")
+// Init initializes the Bubble Tea program.
+func (ir *InteractiveRunner) Init() tea.Cmd {
+	return nil
+}
 
-	fmt.Println("Input command:")
-	if err := scanner.Err(); err != nil {
-		fmt.Println("Error reading input:", err)
-	}
-
-	for scanner.Scan() {
-		input := scanner.Text()
-		if input == "r" {
-			if err := runCommand(cmd); err != nil {
-				fmt.Println("Error:", err)
-			}
+// Update handles messages and updates the model.
+func (ir *InteractiveRunner) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	switch msg := msg.(type) {
+	case tea.KeyMsg:
+		switch msg.String() {
+		case "ctrl+c", "q":
+			return ir, tea.Quit
+		case "r":
+			ir.runCommand(ir.command)
+		case "enter":
+			ir.runCommand(ir.command)
+		default:
 		}
-
-		// Trim whitespace
-		input = strings.TrimSpace(input)
-
-		// Handle exit
-		if input == "q" {
-			fmt.Println("Exiting Interactive Runner.")
-			break
-		}
-
 	}
+	return ir, nil
+}
+
+// View renders the UI.
+func (ir *InteractiveRunner) View() string {
+	return fmt.Sprintf("Input command: %s\n\nCommands:\n  r - Rerun the command\n  q - Quit the runner\n\n %s", ir.command, ir.input)
 }
 
 // runCommand executes a shell command.
-func runCommand(command string) error {
+func (ir *InteractiveRunner) runCommand(command string) {
 	logger.Debugf("Running CLI command: %s", command)
 	parts := strings.Fields(command)
 	if len(parts) == 0 {
-		return fmt.Errorf("no command provided")
+		fmt.Println("No command provided")
+		return
 	}
 
 	cmd := exec.Command(parts[0], parts[1:]...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin
-	return cmd.Run()
+	if err := cmd.Run(); err != nil {
+		fmt.Println("Error:", err)
+	}
 }
 
 func createCLICommand(proj Project, command Command) string {
@@ -79,12 +80,14 @@ func createCLICommand(proj Project, command Command) string {
 		return ""
 	}
 }
+
 func Executor(command Command, project Project) {
 	cmd := createCLICommand(project, command)
-	// run on startup
-	if err := runCommand(cmd); err != nil {
-		logger.Debug(err)
-	}
 	ir := NewInteractiveRunner()
-	ir.Start(cmd)
+	ir.command = cmd
+	program := tea.NewProgram(ir)
+	if _, err := program.Run(); err != nil {
+		logger.Fatalf("%v", err)
+	}
+
 }
