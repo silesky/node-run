@@ -1,6 +1,7 @@
 package commandselector
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 
@@ -32,7 +33,7 @@ func (m *TeaCommandModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		switch msg.String() {
 		// return the selected value and quit
-		case "ctrl+c", "q":
+		case "ctrl+c":
 			m.quitting = true
 			return m, tea.Quit
 
@@ -102,7 +103,7 @@ func (m TeaCommandModel) View() string {
 		lines.WriteString("\n" + m.styles.gray.Render(filterCommand))
 	}
 
-	quitHelp := m.styles.gray.Render("Press q to quit.")
+	quitHelp := m.styles.gray.Render("Press ctrl+c to quit.")
 	lines.WriteString("\n\n" + quitHelp + "\n")
 	return m.styles.container.Render(lines.String())
 }
@@ -157,6 +158,11 @@ func newStyles() Styles {
 	}
 }
 
+// Define custom errors
+var (
+	ErrUserAbort = errors.New("User aborted command selection")
+)
+
 // DisplayCommandSelector displays the command selector UI
 func DisplayCommandSelector(commands []Command) (Command, error) {
 	ti := textinput.New()
@@ -179,6 +185,10 @@ func DisplayCommandSelector(commands []Command) (Command, error) {
 
 	if m.cursor >= 0 && m.cursor < len(m.filtered) && !m.quitting {
 		return m.filtered[m.cursor], nil
+	}
+
+	if m.quitting {
+		return Command{}, ErrUserAbort
 	}
 
 	return Command{}, fmt.Errorf("no command selected")

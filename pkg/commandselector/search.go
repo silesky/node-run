@@ -51,18 +51,12 @@ func RunCommandSelectorPrompt(cwd string) (Command, Project, error) {
 		return Command{}, Project{}, fmt.Errorf("unable to get packages: %v. cwd: %s", err, cwd)
 	}
 	commands := parseAllCommands(packages)
-	selectedCommand, err := displayCommandSelector(commands)
+	selectedCommand, err := DisplayCommandSelector(commands)
 	if err != nil {
 		return Command{}, Project{}, err
 	}
 	logger.Debugf("Selected Command: %+v. Project: %v", selectedCommand, project)
 	return selectedCommand, project, nil
-}
-
-// Display command selector menu (returns user input)
-func displayCommandSelector(commands []Command) (Command, error) {
-	selectedCmd, err := DisplayCommandSelector(commands)
-	return selectedCmd, err
 }
 
 // Read and parse JSON files from the provided paths
