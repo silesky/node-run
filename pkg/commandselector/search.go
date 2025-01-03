@@ -287,7 +287,7 @@ func GetPackages(cwd string) ([]Package, Project, error) {
 		proj := Project{
 			Manager: manager,
 		}
-		return sortByClosedToCwd(pkgs, cwd), proj, nil
+		return sortByClosestToCwd(pkgs, cwd), proj, nil
 	}
 }
 
@@ -303,7 +303,7 @@ func isSubdirectory(parent, subdir string) bool {
 	return res
 }
 
-func sortByClosedToCwd(packages []Package, cwd string) []Package {
+func sortByClosestToCwd(packages []Package, cwd string) []Package {
 	sort.Slice(packages, func(aIdx, bIdx int) bool {
 		a := strings.Replace(packages[aIdx].Path, "package.json", "", 1)
 		b := strings.Replace(packages[bIdx].Path, "package.json", "", 1)
