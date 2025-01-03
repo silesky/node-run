@@ -1,3 +1,4 @@
+// MAYBE: rename to command_interactive.go
 package commandselector
 
 import (
@@ -91,7 +92,7 @@ func createCLICommand(proj Project, command Command) string {
 	}
 }
 
-func Executor(command Command, project Project) {
+func Exec(command Command, project Project) {
 	cmd := createCLICommand(project, command)
 	ir := NewInteractiveRunner(cmd)
 	ir.command = cmd

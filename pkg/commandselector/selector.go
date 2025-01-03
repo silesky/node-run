@@ -160,7 +160,7 @@ func newStyles() Styles {
 
 // Define custom errors
 var (
-	ErrUserAbort = errors.New("User aborted command selection")
+	ErrUserAbort = errors.New("user aborted command selection")
 )
 
 // DisplayCommandSelector displays the command selector UI

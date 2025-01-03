@@ -29,6 +29,6 @@ func Run(settings Settings) {
 		fmt.Fprintf(os.Stderr, "Error getting commands: %v\n", err)
 		return
 	} else {
-		commandselector.Executor(selectedCommand, project)
+		commandselector.Exec(selectedCommand, project)
 	}
 }

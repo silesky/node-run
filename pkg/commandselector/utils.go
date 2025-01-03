@@ -11,39 +11,6 @@ import (
 	"strings"
 )
 
-type Package struct {
-	Path    string
-	IsRoot  bool
-	Manager PackageManager
-	Json    PkgJson
-}
-
-type PkgJson struct {
-	Name    string            `json:"name"`
-	Scripts map[string]string `json:"scripts"`
-	Dir     string
-}
-
-type Command struct {
-	PackageName  string
-	CommandName  string
-	CommandValue string
-	PackageDir   string
-}
-
-// Go doesn't have enums, so we use a type alias and a const block to simulate them
-type PackageManager string
-
-const (
-	Npm  PackageManager = "npm"
-	Yarn PackageManager = "yarn"
-	Pnpm PackageManager = "pnpm"
-)
-
-type Project struct {
-	Manager PackageManager
-}
-
 // Get commands from the scripts key and return them
 func RunCommandSelectorPrompt(cwd string) (Command, Project, error) {
 	packages, project, err := GetPackages(cwd)
@@ -61,7 +28,7 @@ func RunCommandSelectorPrompt(cwd string) (Command, Project, error) {
 
 // Read and parse JSON files from the provided paths
 func parseAllCommands(Packages []Package) []Command {
-	var packages []PkgJson
+	var packages []PackageJson
 	for _, p := range Packages {
 		path := p.Path
 		packageJSON, err := parsePkgJsonFile(path)
@@ -79,7 +46,7 @@ func parseAllCommands(Packages []Package) []Command {
 }
 
 // Parse commands list from a package json
-func parseCommands(packageJson PkgJson) []Command {
+func parseCommands(packageJson PackageJson) []Command {
 	var commands []Command
 	for key, value := range packageJson.Scripts {
 		commands = append(commands, Command{
@@ -93,16 +60,16 @@ func parseCommands(packageJson PkgJson) []Command {
 }
 
 // Parse package json
-func parsePkgJsonFile(path string) (PkgJson, error) {
+func parsePkgJsonFile(path string) (PackageJson, error) {
 	file, err := os.ReadFile(path)
 	if err != nil {
-		return PkgJson{}, err
+		return PackageJson{}, err
 	}
 
-	var packageJSON PkgJson
+	var packageJSON PackageJson
 	err = json.Unmarshal(file, &packageJSON)
 	if err != nil {
-		return PkgJson{}, err
+		return PackageJson{}, err
 	}
 	packageJSON.Dir = filepath.Dir(path)
 	return packageJSON, nil
