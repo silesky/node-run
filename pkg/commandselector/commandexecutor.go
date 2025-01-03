@@ -101,5 +101,4 @@ func Exec(command Command, project Project) {
 	if _, err := program.Run(); err != nil {
 		logger.Fatalf("%v", err)
 	}
-
 }
