@@ -4,7 +4,6 @@ package commandselector
 import (
 	"fmt"
 	"log"
-	"node-task-runner/pkg/logger"
 	"os"
 	"os/exec"
 	"strings"
@@ -12,26 +11,26 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-// InteractiveRunner represents the interactive command runner.
-type InteractiveRunner struct {
+// InteractivePackageCommandRunner represents the interactive command runner.
+type InteractivePackageCommandRunner struct {
 	command string
 	input   string
 }
 
 // NewInteractiveRunner creates a new InteractiveRunner.
-func NewInteractiveRunner(command string) *InteractiveRunner {
-	return &InteractiveRunner{
+func NewInteractiveRunner(command string) *InteractivePackageCommandRunner {
+	return &InteractivePackageCommandRunner{
 		command: command,
 	}
 }
 
 // Init initializes the Bubble Tea program.
-func (ir *InteractiveRunner) Init() tea.Cmd {
+func (ir *InteractivePackageCommandRunner) Init() tea.Cmd {
 	return nil
 }
 
 // Update handles messages and updates the model.
-func (ir *InteractiveRunner) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (ir *InteractivePackageCommandRunner) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
@@ -45,7 +44,7 @@ func (ir *InteractiveRunner) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 // View renders the UI.
-func (ir *InteractiveRunner) View() string {
+func (ir *InteractivePackageCommandRunner) View() string {
 	const template = `
 ---------------------
 Welcome to Interactive Mode.
@@ -59,25 +58,6 @@ Commands:
 	return fmt.Sprintf(template, ir.command, ir.input)
 }
 
-// runCommand executes a shell command.
-func (ir *InteractiveRunner) runCommand() {
-	command := ir.command
-	logger.Debugf("Running CLI command: %s", command)
-	parts := strings.Fields(command)
-	if len(parts) == 0 {
-		fmt.Println("No command provided")
-		return
-	}
-
-	cmd := exec.Command(parts[0], parts[1:]...)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	cmd.Stdin = os.Stdin
-	if err := cmd.Run(); err != nil {
-		fmt.Println("Error:", err)
-	}
-}
-
 func createCLICommand(proj Project, command Command) string {
 	switch proj.Manager {
 	case Npm:
@@ -87,18 +67,35 @@ func createCLICommand(proj Project, command Command) string {
 	case Yarn:
 		return fmt.Sprintf("yarn --cwd %s %s", command.PackageDir, command.CommandName)
 	default:
-		log.Fatalf("invariant")
+		log.Fatalf("invariant -- unknown package manager: %s", proj.Manager)
 		return ""
+	}
+}
+
+func (ir *InteractivePackageCommandRunner) runCommand() {
+	command := ir.command
+	parts := strings.Fields(command)
+	if len(parts) == 0 {
+		fmt.Println("No command provided")
+		return
+	}
+
+	// the first part is the binary (e.g. npm), the rest are the args
+	cmd := exec.Command(parts[0], parts[1:]...)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Stdin = os.Stdin
+	if err := cmd.Run(); err != nil {
+		fmt.Println("Error:", err)
 	}
 }
 
 func Exec(command Command, project Project) {
 	cmd := createCLICommand(project, command)
 	ir := NewInteractiveRunner(cmd)
-	ir.command = cmd
 	ir.runCommand()
 	program := tea.NewProgram(ir)
 	if _, err := program.Run(); err != nil {
-		logger.Fatalf("%v", err)
+		log.Fatalf("%v", err)
 	}
 }
