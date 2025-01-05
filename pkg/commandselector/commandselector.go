@@ -84,7 +84,7 @@ func (m TeaCommandModel) View() string {
 
 		// Format the line for the current command
 		line := fmt.Sprintf("%s [%s] %s (%s)",
-			cursor, cmd.PackageName, m.styles.blue.Render(cmd.CommandName), m.styles.gray.Render(cmd.CommandValue))
+			cursor, cmd.PackageName, m.styles.purple.Render(cmd.CommandName), m.styles.gray.Render(cmd.CommandValue))
 		line = strings.Replace(line, cursor, "", 1)
 		if m.cursor == i {
 			lines.WriteString(cursor + m.styles.magenta.Render(line))
@@ -141,20 +141,20 @@ type Styles struct {
 	magenta   lipgloss.Style
 	container lipgloss.Style
 	gray      lipgloss.Style
-	blue      lipgloss.Style
+	purple    lipgloss.Style
 }
 
 func newStyles() Styles {
 	// https://hexdocs.pm/color_palette/ansi_color_codes.html
-	magenta := lipgloss.Color("205")
-	charcoal := lipgloss.Color("236")
-	blue := lipgloss.Color("20")
+	magenta := lipgloss.Color(Colors.magenta)
+	charcoal := lipgloss.Color(Colors.charcoal)
+	purple := lipgloss.Color(Colors.purple)
 
 	return Styles{
 		magenta:   lipgloss.NewStyle().Foreground(magenta),
 		container: lipgloss.NewStyle(),
 		gray:      lipgloss.NewStyle().Foreground(charcoal),
-		blue:      lipgloss.NewStyle().Foreground(blue),
+		purple:    lipgloss.NewStyle().Foreground(purple),
 	}
 }
 

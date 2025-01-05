@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 )
 
 // InteractivePackageCommandRunner represents the interactive command runner.
@@ -43,19 +44,39 @@ func (ir *InteractivePackageCommandRunner) Update(msg tea.Msg) (tea.Model, tea.C
 	return ir, nil
 }
 
-// View renders the UI.
 func (ir *InteractivePackageCommandRunner) View() string {
-	const template = `
----------------------
-Welcome to Interactive Mode.
+	titleStyle := lipgloss.NewStyle().
+		Bold(true).
+		Foreground(lipgloss.Color(Colors.white)).
+		Background(lipgloss.Color(Colors.purple)).
+		Padding(1, 2).
+		MarginBottom(1)
+
+	commandStyle := lipgloss.NewStyle().
+		Foreground(lipgloss.Color(Colors.purple)).
+		Bold(true)
+
+	helpCommandsStyle := lipgloss.NewStyle().
+		Foreground(lipgloss.Color(Colors.white)).
+		Background(lipgloss.Color(Colors.purple)).
+		Padding(0, 1)
+
+	template := `
+%s
 Input command: %s
 
 Commands:
-  r - Rerun the command
-  q - Quit the runner
+  %s - Rerun the command
+  %s - Quit the runner
 
 %s`
-	return fmt.Sprintf(template, ir.command, ir.input)
+	return fmt.Sprintf(template,
+		titleStyle.Render("Interactive Mode"),
+		commandStyle.Render(ir.command),
+		helpCommandsStyle.Render("r"),
+		helpCommandsStyle.Render("q"),
+		ir.input,
+	)
 }
 
 func createCLICommand(proj Project, command Command) string {
