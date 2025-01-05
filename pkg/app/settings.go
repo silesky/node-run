@@ -21,8 +21,9 @@ func expandPath(path string) (string, error) {
 }
 
 type Settings struct {
-	Cwd   string
-	Debug bool
+	Cwd               string
+	Debug             bool
+	InitialInputValue string
 }
 
 type Option func(*Settings)

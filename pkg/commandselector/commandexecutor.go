@@ -2,6 +2,7 @@
 package commandselector
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -15,7 +16,7 @@ import (
 // InteractivePackageCommandRunner represents the interactive command runner.
 type InteractivePackageCommandRunner struct {
 	command string
-	input   string
+	escape  bool
 }
 
 // NewInteractiveRunner creates a new InteractiveRunner.
@@ -36,6 +37,9 @@ func (ir *InteractivePackageCommandRunner) Update(msg tea.Msg) (tea.Model, tea.C
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "ctrl+c", "q":
+			return ir, tea.Quit
+		case "esc", "b":
+			ir.escape = true
 			return ir, tea.Quit
 		case "r", "enter":
 			ir.runCommand()
@@ -61,21 +65,23 @@ func (ir *InteractivePackageCommandRunner) View() string {
 		Background(lipgloss.Color(Colors.purple)).
 		Padding(0, 1)
 
+	FooterCommandStyle := lipgloss.NewStyle().
+		Foreground(lipgloss.Color(Colors.charcoal))
 	template := `
 %s
-Input command: %s
+shell command: %s
 
-Commands:
-  %s - Rerun the command
-  %s - Quit the runner
+%s - Re-run the command
+%s - Go back
 
-%s`
+%s
+`
 	return fmt.Sprintf(template,
 		titleStyle.Render("Interactive Mode"),
 		commandStyle.Render(ir.command),
 		helpCommandsStyle.Render("r"),
-		helpCommandsStyle.Render("q"),
-		ir.input,
+		helpCommandsStyle.Render("esc or b"),
+		FooterCommandStyle.Render("Press ctrl+c to quit."),
 	)
 }
 
@@ -111,12 +117,23 @@ func (ir *InteractivePackageCommandRunner) runCommand() {
 	}
 }
 
-func Exec(command Command, project Project) {
+var (
+	ErrEscape = errors.New("user pressed escape")
+)
+
+func Exec(command Command, project Project) error {
 	cmd := createCLICommand(project, command)
 	ir := NewInteractiveRunner(cmd)
+	// initial run command
 	ir.runCommand()
+
+	// command runner
 	program := tea.NewProgram(ir)
 	if _, err := program.Run(); err != nil {
 		log.Fatalf("%v", err)
 	}
+	if ir.escape {
+		return ErrEscape
+	}
+	return nil
 }

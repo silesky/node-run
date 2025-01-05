@@ -12,13 +12,13 @@ import (
 )
 
 // Get commands from the scripts key and return them
-func RunCommandSelectorPrompt(cwd string) (Command, Project, error) {
+func RunCommandSelectorPrompt(cwd string, initialInputValue string) (Command, Project, error) {
 	packages, project, err := GetPackages(cwd)
 	if err != nil {
 		return Command{}, Project{}, fmt.Errorf("unable to get packages: %v. cwd: %s", err, cwd)
 	}
 	commands := parseAllCommands(packages)
-	selectedCommand, err := DisplayCommandSelector(commands)
+	selectedCommand, err := DisplayCommandSelector(commands, initialInputValue)
 	if err != nil {
 		return Command{}, Project{}, err
 	}

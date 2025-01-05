@@ -33,7 +33,7 @@ func (m *TeaCommandModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		switch msg.String() {
 		// return the selected value and quit
-		case "ctrl+c":
+		case "ctrl+c", "esc":
 			m.quitting = true
 			return m, tea.Quit
 
@@ -164,8 +164,9 @@ var (
 )
 
 // DisplayCommandSelector displays the command selector UI
-func DisplayCommandSelector(commands []Command) (Command, error) {
+func DisplayCommandSelector(commands []Command, initialInputValue string) (Command, error) {
 	ti := textinput.New()
+	ti.SetValue(initialInputValue)
 	ti.Placeholder = "Type to filter"
 	ti.Focus()
 	ti.CharLimit = 156
