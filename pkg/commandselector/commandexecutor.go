@@ -38,10 +38,10 @@ func (ir *InteractivePackageCommandRunner) Update(msg tea.Msg) (tea.Model, tea.C
 		switch msg.String() {
 		case "ctrl+c", "q":
 			return ir, tea.Quit
-		case "esc", "b":
+		case "esc":
 			ir.escape = true
 			return ir, tea.Quit
-		case "r", "enter":
+		case "enter":
 			ir.runCommand()
 		}
 	}
@@ -53,8 +53,7 @@ func (ir *InteractivePackageCommandRunner) View() string {
 		Bold(true).
 		Foreground(lipgloss.Color(Colors.white)).
 		Background(lipgloss.Color(Colors.purple)).
-		Padding(1, 2).
-		MarginBottom(1)
+		Padding(1, 1)
 
 	commandStyle := lipgloss.NewStyle().
 		Foreground(lipgloss.Color(Colors.purple)).
@@ -69,7 +68,8 @@ func (ir *InteractivePackageCommandRunner) View() string {
 		Foreground(lipgloss.Color(Colors.charcoal))
 	template := `
 %s
-shell command: %s
+
+%s
 
 %s - Re-run the command
 %s - Go back
@@ -79,8 +79,8 @@ shell command: %s
 	return fmt.Sprintf(template,
 		titleStyle.Render("Interactive Mode"),
 		commandStyle.Render(ir.command),
-		helpCommandsStyle.Render("r"),
-		helpCommandsStyle.Render("esc or b"),
+		helpCommandsStyle.Render("enter"),
+		helpCommandsStyle.Render("esc"),
 		FooterCommandStyle.Render("Press ctrl+c to quit."),
 	)
 }
