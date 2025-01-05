@@ -19,8 +19,8 @@ type InteractivePackageCommandRunner struct {
 	escape  bool
 }
 
-// NewInteractiveRunner creates a new InteractiveRunner.
-func NewInteractiveRunner(command string) *InteractivePackageCommandRunner {
+// getInitialInteractiveRunnerModel creates a new InteractiveRunner.
+func getInitialInteractiveRunnerModel(command string) *InteractivePackageCommandRunner {
 	return &InteractivePackageCommandRunner{
 		command: command,
 	}
@@ -41,8 +41,9 @@ func (ir *InteractivePackageCommandRunner) Update(msg tea.Msg) (tea.Model, tea.C
 		case "esc":
 			ir.escape = true
 			return ir, tea.Quit
-		case "enter":
+		case "enter", "r":
 			ir.runCommand()
+			return ir, nil
 		}
 	}
 	return ir, nil
@@ -74,8 +75,7 @@ func (ir *InteractivePackageCommandRunner) View() string {
 %s - Re-run the command
 %s - Go back
 
-%s
-`
+%s`
 	return fmt.Sprintf(template,
 		titleStyle.Render("Interactive Mode"),
 		commandStyle.Render(ir.command),
@@ -123,7 +123,7 @@ var (
 
 func Exec(command Command, project Project) error {
 	cmd := createCLICommand(project, command)
-	ir := NewInteractiveRunner(cmd)
+	ir := getInitialInteractiveRunnerModel(cmd)
 	// initial run command
 	ir.runCommand()
 
