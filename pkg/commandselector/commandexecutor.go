@@ -19,8 +19,8 @@ type InteractivePackageCommandRunner struct {
 	escape  bool
 }
 
-// createInitialInteractiveRunnerModel creates a new InteractiveRunner.
-func createInitialInteractiveRunnerModel(command string) *InteractivePackageCommandRunner {
+// createInteractiveRunnerModel creates a new InteractiveRunner.
+func createInteractiveRunnerModel(command string) *InteractivePackageCommandRunner {
 	return &InteractivePackageCommandRunner{
 		command: command,
 	}
@@ -123,7 +123,7 @@ var (
 
 func Exec(command Command, project Project) error {
 	cmd := createCLICommand(project, command)
-	ir := createInitialInteractiveRunnerModel(cmd)
+	ir := createInteractiveRunnerModel(cmd)
 	// initial run command
 	ir.runCommand()
 
