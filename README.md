@@ -6,6 +6,6 @@
 
 ```sh
 make build
-./bin/ntk 
+./bin/nt 
 ```
 

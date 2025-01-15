@@ -36,7 +36,7 @@ func main() {
 }
 
 func usage() {
-	fmt.Fprintf(os.Stderr, "\nUsage of ntk \n")
+	fmt.Fprintf(os.Stderr, "\nUsage of nt \n")
 	flag.VisitAll(func(f *flag.Flag) {
 		// override to show e.g (--flag) instead of -flag
 		fmt.Fprintf(os.Stderr, "  --%s\n\t%s\n", f.Name, f.Usage)

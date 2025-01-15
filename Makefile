@@ -1,5 +1,5 @@
 # Variables
-BINARY_NAME = ntk
+BINARY_NAME = nt
 BUILD_DIR = bin
 
 # Default target
