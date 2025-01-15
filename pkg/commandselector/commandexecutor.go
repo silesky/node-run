@@ -123,16 +123,19 @@ var (
 
 func Exec(command Command, project Project) error {
 	cmd := createCLICommand(project, command)
-	ir := createInteractiveRunnerModel(cmd)
-	// command runner
-	program := tea.NewProgram(ir)
-	if _, err := program.Run(); err != nil {
-		log.Fatalf("%v", err)
-	}
 	// initial run command
+	ir := createInteractiveRunnerModel(cmd)
 	ir.runCommand()
-	if ir.escape {
-		return ErrEscape
+
+	// command runner
+	if command.ExecOptions.WithRunner {
+		program := tea.NewProgram(ir)
+		if _, err := program.Run(); err != nil {
+			log.Fatalf("%v", err)
+		}
+		if ir.escape {
+			return ErrEscape
+		}
 	}
 	return nil
 }

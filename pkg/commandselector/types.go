@@ -26,9 +26,14 @@ type PackageJson struct {
 	Dir     string
 }
 
+type ExecOptions struct {
+	WithRunner bool
+}
+
 type Command struct {
 	PackageName  string
 	CommandName  string
 	CommandValue string
 	PackageDir   string
+	ExecOptions  ExecOptions
 }

@@ -16,8 +16,9 @@ type TeaCommandModel struct {
 	filtered []Command
 	cursor   int
 	input    textinput.Model
-	quitting bool
 	styles   Styles
+	quitting bool
+	runner   bool
 }
 
 // Init is required implementation
@@ -37,7 +38,12 @@ func (m *TeaCommandModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.quitting = true
 			return m, tea.Quit
 
-		// return the selected value and quit
+		// run the command in interactive mode
+		case "ctrl+r":
+			m.runner = true
+			return m, tea.Quit
+
+		// run the command
 		case "enter":
 			return m, tea.Quit
 
@@ -66,6 +72,14 @@ func (m *TeaCommandModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	}
 
 	return m, cmd
+}
+
+func renderQuit(styles Styles, lines []string) string {
+	var message string
+	for _, m := range lines {
+		message += styles.gray.Render(m) + "\n"
+	}
+	return message
 }
 
 // View is required implementation for tea
@@ -103,7 +117,9 @@ func (m TeaCommandModel) View() string {
 		lines.WriteString("\n" + m.styles.gray.Render(filterCommand))
 	}
 
-	quitHelp := m.styles.gray.Render("Press ctrl+c to quit.")
+	quitHelp := renderQuit(m.styles, []string{
+		"Press enter to run", "Press ctrl+r to run interactively.", "Press ctrl+c to quit."})
+
 	lines.WriteString("\n\n" + quitHelp + "\n")
 	return m.styles.container.Render(lines.String())
 }
@@ -180,12 +196,15 @@ func DisplayCommandSelector(commands []Command, initialInputValue string) (Comma
 	}
 
 	program := tea.NewProgram(m)
+
 	if _, err := program.Run(); err != nil {
 		return Command{}, err
 	}
 
 	if m.cursor >= 0 && m.cursor < len(m.filtered) && !m.quitting {
-		return m.filtered[m.cursor], nil
+		cmd := m.filtered[m.cursor]
+		cmd.ExecOptions.WithRunner = m.runner
+		return cmd, nil
 	}
 
 	if m.quitting {
