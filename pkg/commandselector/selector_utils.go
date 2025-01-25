@@ -2,6 +2,7 @@ package commandselector
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"node-task-runner/pkg/logger"
@@ -92,6 +93,10 @@ func hasWorkspacesArray(packageJSONPath string) bool {
 	return ok
 }
 
+var (
+	ErrNoWorkspace = errors.New("no workspaces array found in package.json")
+)
+
 // parseWorkspacesArray parses the workspaces array in the root package.json and finds all package.json files
 func parseWorkspacesArray(monorepoRoot string) ([]string, error) {
 	packageJSONPath := filepath.Join(monorepoRoot, "package.json")
@@ -108,7 +113,7 @@ func parseWorkspacesArray(monorepoRoot string) ([]string, error) {
 
 	workspaces, ok := packageJSON["workspaces"].([]interface{})
 	if !ok {
-		return nil, fmt.Errorf("workspaces array not found in package.json")
+		return nil, ErrNoWorkspace
 	}
 
 	var packageJSONPaths []string
@@ -130,23 +135,21 @@ func parseWorkspacesArray(monorepoRoot string) ([]string, error) {
 // findAllPackageJSONs finds all package.json files starting from the given directory
 func findAllPackageJSONs(startDir string) ([]Package, error) {
 
+	var packageJSONPaths []string
+
 	monorepoRoot, err := findMonorepoRoot(startDir)
 	if err != nil {
-		return nil, err
-	}
-
-	// get the workspaces array in the root package.json
-	packageJSONPaths, err := parseWorkspacesArray(monorepoRoot)
-
-	// append the root package.json
-	packageJSONPaths = append(packageJSONPaths, filepath.Join(monorepoRoot, "package.json"))
-
-	if err != nil {
-		return nil, err
-	}
-
-	if len(packageJSONPaths) == 0 {
-		return nil, fmt.Errorf("no package.json found: %v", startDir)
+		// if we're not in a monorepo, just look for the package.json in the current directory
+		fallbackPackageJSONPath := filepath.Join(startDir, "package.json")
+		if _, err := os.Stat(fallbackPackageJSONPath); err != nil {
+			return nil, fmt.Errorf("no package.json found in current directory AND you're not in a monorepo: %v", startDir)
+		} else {
+			packageJSONPaths = []string{fallbackPackageJSONPath}
+		}
+	} else {
+		// otherwise, discover all package.json files in the monorepo by using the workspace array
+		paths, _ := parseWorkspacesArray(monorepoRoot)
+		packageJSONPaths = append(paths, filepath.Join(monorepoRoot, "package.json"))
 	}
 
 	var packages []Package
@@ -154,7 +157,7 @@ func findAllPackageJSONs(startDir string) ([]Package, error) {
 		isRoot := i == 0
 		pkg, err := CreatePackageFromPath(path, isRoot)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("could not create package from path %s: %v", path, err)
 		}
 		packages = append(packages, pkg)
 	}
@@ -163,6 +166,7 @@ func findAllPackageJSONs(startDir string) ([]Package, error) {
 
 // findMonorepoRoot finds the root of the monorepo by looking for a package.json with a workspaces array
 func findMonorepoRoot(startDir string) (string, error) {
+	// walk up the directory tree until we find a package.json with a workspaces array
 	for {
 		packageJSONPath := filepath.Join(startDir, "package.json")
 		if _, err := os.Stat(packageJSONPath); err == nil {
@@ -217,19 +221,19 @@ func detectPackageManager(dirPath string) (PackageManager, error) {
 }
 
 // CreatePackageFromPath creates a Package struct from a package.json file
-func CreatePackageFromPath(path string, isRoot bool) (Package, error) {
-	pkgJson, err := parsePkgJsonFile(path)
+func CreatePackageFromPath(pkgJSONPath string, isRoot bool) (Package, error) {
+	pkgJson, err := parsePkgJsonFile(pkgJSONPath)
 	if err != nil {
 		return Package{}, err
 	}
 
-	pkgManager, err := detectPackageManager(filepath.Dir(path))
+	pkgManager, err := detectPackageManager(filepath.Dir(pkgJSONPath))
 	if err != nil {
 		return Package{}, err
 	}
 
 	return Package{
-		Path:    path,
+		Path:    pkgJSONPath,
 		IsRoot:  isRoot,
 		Json:    pkgJson,
 		Manager: pkgManager,
