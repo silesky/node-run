@@ -23,11 +23,12 @@ type TeaCommandModel struct {
 
 // Init is required implementation
 func (m *TeaCommandModel) Init() tea.Cmd {
-	return textinput.Blink
+	return m.input.Focus()
 }
 
 // Update is required implementation
 func (m *TeaCommandModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	// fmt.Printf("msg: %s\n", msg)
 	var cmd tea.Cmd
 	switch msg := msg.(type) {
 
@@ -60,14 +61,14 @@ func (m *TeaCommandModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 
 		case "backspace":
-			m.input, cmd = m.input.Update(msg)
 			m.filtered = filterCommands(m.commands, m.input.Value())
 			m.cursor = 0 // reset cursor to the first command
+			m.input, cmd = m.input.Update(msg)
 
 		default:
-			m.input, cmd = m.input.Update(msg)
 			m.filtered = filterCommands(m.commands, m.input.Value())
 			m.cursor = 0 // reset cursor to the first command
+			m.input, cmd = m.input.Update(msg)
 		}
 	}
 
@@ -86,7 +87,7 @@ func renderQuit(styles Styles, lines []string) string {
 func (m TeaCommandModel) View() string {
 	var lines strings.Builder
 
-	lines.WriteString("\nFilter: ")
+	lines.WriteString("Filter: ")
 	lines.WriteString(m.input.View())
 	lines.WriteString("\n\n")
 
@@ -110,12 +111,8 @@ func (m TeaCommandModel) View() string {
 	}
 
 	// if no results, show no results found. otherwise, only show results message if filter is active.
-	if len(m.filtered) == 0 {
-		lines.WriteString("\n" + m.styles.gray.Render("No results found.") + "\n")
-	} else if len(m.filtered) != len(m.commands) {
-		filterCommand := fmt.Sprintf("Displaying %d of %d results", len(m.filtered), len(m.commands))
-		lines.WriteString("\n" + m.styles.gray.Render(filterCommand))
-	}
+	filterCommand := fmt.Sprintf("Displaying %d of %d results", len(m.filtered), len(m.commands))
+	lines.WriteString("\n" + m.styles.gray.Render(filterCommand))
 
 	quitHelp := renderQuit(m.styles, []string{
 		"Press enter to run.", "Press ctrl+r to run interactively (beta).", "Press ctrl+c to quit."})
@@ -182,21 +179,18 @@ var (
 // DisplayCommandSelector displays the command selector UI
 func DisplayCommandSelector(commands []Command, initialInputValue string) (Command, error) {
 	ti := textinput.New()
-	ti.SetValue(initialInputValue)
 	ti.Placeholder = "Type to filter"
-	ti.Focus()
 	ti.CharLimit = 156
 	ti.Width = 20
-
-	// If there is an initial input value, filter the commands
-	filteredCommands := commands
+	ti.SetValue(initialInputValue)
+	filtered := commands
 	if initialInputValue != "" {
-		filteredCommands = filterCommands(commands, initialInputValue)
+		filtered = filterCommands(commands, initialInputValue)
 	}
 
 	m := &TeaCommandModel{
 		commands: commands,
-		filtered: filteredCommands, // Start with all commands
+		filtered: filtered,
 		input:    ti,
 		styles:   newStyles(),
 	}
