@@ -20,14 +20,14 @@ func main() {
 		return
 	}
 
-	if len(os.Args) > 1 {
-		switch os.Args[1] {
-		case "help":
-			flag.Usage()
-			return
-		}
+	var initialInput string
+
+	nonFlagArgs := flag.Args()
+	if len(nonFlagArgs) > 0 {
+		initialInput = nonFlagArgs[0]
 	}
-	settings, err := app.NewSettings(app.WithCwd(flags.Cwd), app.WithDebug(flags.Debug))
+
+	settings, err := app.NewSettings(app.WithCwd(flags.Cwd), app.WithDebug(flags.Debug), app.WithInitialInput(initialInput))
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error creating settings: %v\n", err)
 		return

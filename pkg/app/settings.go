@@ -53,6 +53,12 @@ func WithDebug(debug bool) Option {
 	}
 }
 
+func WithInitialInput(initialInput string) Option {
+	return func(s *Settings) {
+		s.InitialInputValue = initialInput
+	}
+}
+
 func (settings *Settings) Validate() error {
 	if settings.Cwd != "" {
 		if _, err := os.Stat(settings.Cwd); err != nil {
