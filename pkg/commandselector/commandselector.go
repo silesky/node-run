@@ -118,7 +118,7 @@ func (m TeaCommandModel) View() string {
 	}
 
 	quitHelp := renderQuit(m.styles, []string{
-		"Press enter to run.", "Press ctrl+r to run interactively.", "Press ctrl+c to quit."})
+		"Press enter to run.", "Press ctrl+r to run interactively (beta).", "Press ctrl+c to quit."})
 
 	lines.WriteString("\n\n" + quitHelp + "\n")
 	return m.styles.container.Render(lines.String())
@@ -189,11 +189,9 @@ func DisplayCommandSelector(commands []Command, initialInputValue string) (Comma
 	ti.Width = 20
 
 	// If there is an initial input value, filter the commands
-	var filteredCommands []Command
+	filteredCommands := commands
 	if initialInputValue != "" {
 		filteredCommands = filterCommands(commands, initialInputValue)
-	} else {
-		filteredCommands = commands
 	}
 
 	m := &TeaCommandModel{
