@@ -2,10 +2,16 @@
 
 ## Usage
 
-### Build the CLI
+### Build & Execute
+
+Compiles into `./bin/nt`
+
+```sh
+make run ARGS=--cwd=~/projects/monorepo-example
+```
+
+### Build Only
 
 ```sh
 make build
-./bin/nt 
 ```
-
