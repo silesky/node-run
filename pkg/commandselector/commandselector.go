@@ -60,11 +60,6 @@ func (m *TeaCommandModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.cursor++
 			}
 
-		case "backspace":
-			m.filtered = filterCommands(m.commands, m.input.Value())
-			m.cursor = 0 // reset cursor to the first command
-			m.input, cmd = m.input.Update(msg)
-
 		default:
 			m.filtered = filterCommands(m.commands, m.input.Value())
 			m.cursor = 0 // reset cursor to the first command
