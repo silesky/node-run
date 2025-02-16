@@ -20,6 +20,7 @@ func main() {
 		return
 	}
 
+	// Use any non-flags "eg nt test" where test is the initial input
 	var initialInput string
 
 	nonFlagArgs := flag.Args()
