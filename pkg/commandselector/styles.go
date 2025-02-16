@@ -6,6 +6,7 @@ type AnsiColors struct {
 	blue     string
 	purple   string
 	white    string
+	yellow   string
 }
 
 var (
@@ -15,5 +16,6 @@ var (
 		charcoal: "236",
 		blue:     "20",
 		purple:   "55",
+		yellow:   "226",
 	}
 )

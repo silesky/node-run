@@ -78,11 +78,10 @@ func renderQuit(styles Styles, lines []string) string {
 	return message
 }
 
-// View is required implementation for tea
 func (m TeaCommandModel) View() string {
 	var lines strings.Builder
 
-	lines.WriteString("\nFilter: ")
+	lines.WriteString(m.styles.purple.Render("\nFilter: "))
 	lines.WriteString(m.input.View())
 	lines.WriteString("\n\n")
 
@@ -150,6 +149,7 @@ type Styles struct {
 	container lipgloss.Style
 	gray      lipgloss.Style
 	purple    lipgloss.Style
+	yellow    lipgloss.Style
 }
 
 func newStyles() Styles {
@@ -157,12 +157,14 @@ func newStyles() Styles {
 	magenta := lipgloss.Color(Colors.magenta)
 	charcoal := lipgloss.Color(Colors.charcoal)
 	purple := lipgloss.Color(Colors.purple)
+	yellow := lipgloss.Color(Colors.yellow)
 
 	return Styles{
 		magenta:   lipgloss.NewStyle().Foreground(magenta),
 		container: lipgloss.NewStyle(),
 		gray:      lipgloss.NewStyle().Foreground(charcoal),
 		purple:    lipgloss.NewStyle().Foreground(purple),
+		yellow:    lipgloss.NewStyle().Foreground(yellow),
 	}
 }
 
@@ -175,8 +177,6 @@ var (
 func DisplayCommandSelector(commands []Command, initialInputValue string) (Command, error) {
 	ti := textinput.New()
 	ti.Placeholder = "Type to filter"
-	ti.CharLimit = 156
-	ti.Width = 20
 	ti.SetValue(initialInputValue)
 	filtered := commands
 	if initialInputValue != "" {
