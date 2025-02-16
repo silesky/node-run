@@ -82,7 +82,7 @@ func renderQuit(styles Styles, lines []string) string {
 func (m TeaCommandModel) View() string {
 	var lines strings.Builder
 
-	lines.WriteString("Filter: ")
+	lines.WriteString("\nFilter: ")
 	lines.WriteString(m.input.View())
 	lines.WriteString("\n\n")
 
