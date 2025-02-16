@@ -118,7 +118,7 @@ func (m TeaCommandModel) View() string {
 	}
 
 	quitHelp := renderQuit(m.styles, []string{
-		"Press enter to run", "Press ctrl+r to run interactively.", "Press ctrl+c to quit."})
+		"Press enter to run.", "Press ctrl+r to run interactively.", "Press ctrl+c to quit."})
 
 	lines.WriteString("\n\n" + quitHelp + "\n")
 	return m.styles.container.Render(lines.String())
