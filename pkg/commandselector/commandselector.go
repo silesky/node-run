@@ -188,9 +188,17 @@ func DisplayCommandSelector(commands []Command, initialInputValue string) (Comma
 	ti.CharLimit = 156
 	ti.Width = 20
 
+	// If there is an initial input value, filter the commands
+	var filteredCommands []Command
+	if initialInputValue != "" {
+		filteredCommands = filterCommands(commands, initialInputValue)
+	} else {
+		filteredCommands = commands
+	}
+
 	m := &TeaCommandModel{
 		commands: commands,
-		filtered: commands, // Start with all commands
+		filtered: filteredCommands, // Start with all commands
 		input:    ti,
 		styles:   newStyles(),
 	}
