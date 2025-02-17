@@ -1,16 +1,23 @@
 # Variables
-BINARY_NAME = nt
+BINARY_NAME = nr
 BUILD_DIR = bin
 
 # Default target
 all: build
 
-# Build the binary
-build:
-		@echo "Building...\n"
-		mkdir -p $(BUILD_DIR)
-		go build -o $(BUILD_DIR)/$(BINARY_NAME) ./cmd/node-task-runner $(ARGS)
-		chmod +x $(BUILD_DIR)/$(BINARY_NAME)
+build: build-amd64 build-arm64
+
+build-amd64:
+		@echo "Building for amd64...\n"
+		mkdir -p $(BUILD_DIR)/amd64
+		GOARCH=amd64 go build -o $(BUILD_DIR)/amd64/$(BINARY_NAME) ./cmd/node-task-runner $(ARGS)
+		chmod +x $(BUILD_DIR)/amd64/$(BINARY_NAME)
+
+build-arm64:
+		@echo "Building for arm64...\n"
+		mkdir -p $(BUILD_DIR)/arm64
+		GOARCH=arm64 go build -o $(BUILD_DIR)/arm64/$(BINARY_NAME) ./cmd/node-task-runner $(ARGS)
+		chmod +x $(BUILD_DIR)/arm64/$(BINARY_NAME)
 
 # Run the binary
 run: 

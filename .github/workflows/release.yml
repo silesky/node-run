@@ -1,0 +1,83 @@
+name: Release & Homebrew Update
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: "1.21"
+
+      - name: Get Version from Tag
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+
+      - name: Build Binaries
+        run: |
+          make clean
+          make build
+          mkdir -p dist
+          mv bin/amd64/nr dist/nr-linux-amd64
+          mv bin/arm64/nr dist/nr-linux-arm64
+          chmod +x dist/*
+
+      - name: Compute SHA256 Hashes
+        run: |
+          sha256sum dist/nr-linux-amd64 | awk '{ print $1 }' > sha256_amd64.txt
+          sha256sum dist/nr-linux-arm64 | awk '{ print $1 }' > sha256_arm64.txt
+          echo "SHA256_AMD64=$(cat sha256_amd64.txt)" >> $GITHUB_ENV
+          echo "SHA256_ARM64=$(cat sha256_arm64.txt)" >> $GITHUB_ENV
+
+      - name: Create GitHub Release with gh CLI
+        run: |
+          gh release create "${{ env.VERSION }}" \
+            dist/nr-linux-amd64 dist/nr-linux-arm64 \
+            --title "Release ${{ env.VERSION }}" \
+            --notes "Automated release of ${{ env.VERSION }}"
+
+      - name: Checkout Homebrew Tap Repository
+        uses: actions/checkout@v4
+        with:
+          repository: silesky/homebrew-node-run
+          token: ${{ secrets.HOMEBREW_TAP_GITHUB_TOKEN }}
+
+      - name: Update Homebrew Formula
+        run: |
+          cat <<EOF > Formula/node-run.rb
+          class NodeRun < Formula
+            desc "Node Run (nr) - a fzf-like, monorepo-aware tool for easily running npm scripts"
+            homepage "https://github.com/silesky/node-run"
+            url "https://github.com/silesky/node-run/releases/download/${{ env.VERSION }}/nr-linux-amd64"
+            sha256 "${{ env.SHA256_AMD64 }}"
+            license "MIT"
+
+            def install
+              bin.install "nr-linux-amd64" => "nr"
+            end
+
+            test do
+              system "#{bin}/nr", "--help"
+            end
+          end
+          EOF
+
+      - name: Commit and Push Homebrew Formula Update
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add Formula/node-run.rb
+          git commit -m "Update node-run formula to ${{ env.VERSION }}"
+          git push origin main
