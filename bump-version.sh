@@ -45,7 +45,7 @@ git commit -m "$COMMIT_MESSAGE"
 git tag -a "$NEW_TAG" -m "$COMMIT_MESSAGE"
 
 # Push the commit and the new tag
-git push origin main --tags
+git push origin main --follow-tags
 
 echo "✅ New commit and annotated tag created and pushed: $NEW_TAG"
 echo "📜 Message: $COMMIT_MESSAGE"
