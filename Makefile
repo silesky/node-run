@@ -42,7 +42,7 @@ clean:
 
 # Run all tests - make test ARGS="-run TestSpecificFunction"
 test:
-		go test ./... -v$(ARGS) 
+		go test ./... -v $(ARGS) 
 
 # List the make targets
 help:                                                                                                                    
