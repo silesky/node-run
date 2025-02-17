@@ -3,7 +3,7 @@ name: Release & Homebrew Update
 on:
   push:
     tags:
-      - "v*"
+      - "v*" # Trigger workflow on new version tags (e.g., v1.0.0)
 
 permissions:
   contents: write
@@ -25,28 +25,28 @@ jobs:
         id: get_version
         run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
 
-      - name: Build Binaries
+      - name: Build Binaries for macOS & Linux
         run: |
           make clean
           make build
-          mkdir -p dist
-          mv bin/amd64/nr dist/nr-linux-amd64
-          mv bin/arm64/nr dist/nr-linux-arm64
-          chmod +x dist/*
 
       - name: Compute SHA256 Hashes
         run: |
-          sha256sum dist/nr-linux-amd64 | awk '{ print $1 }' > sha256_amd64.txt
-          sha256sum dist/nr-linux-arm64 | awk '{ print $1 }' > sha256_arm64.txt
-          echo "SHA256_AMD64=$(cat sha256_amd64.txt)" >> $GITHUB_ENV
-          echo "SHA256_ARM64=$(cat sha256_arm64.txt)" >> $GITHUB_ENV
+          sha256sum bin/linux/amd64/nr | awk '{ print $1 }' > sha256_linux_amd64.txt
+          sha256sum bin/linux/arm64/nr | awk '{ print $1 }' > sha256_linux_arm64.txt
+          sha256sum bin/darwin/amd64/nr | awk '{ print $1 }' > sha256_darwin_amd64.txt
+          sha256sum bin/darwin/arm64/nr | awk '{ print $1 }' > sha256_darwin_arm64.txt
 
-      - name: Create GitHub Release with gh CLI
-        env:
-          GH_TOKEN: ${{ github.token }}
+          echo "SHA256_LINUX_AMD64=$(cat sha256_linux_amd64.txt)" >> $GITHUB_ENV
+          echo "SHA256_LINUX_ARM64=$(cat sha256_linux_arm64.txt)" >> $GITHUB_ENV
+          echo "SHA256_DARWIN_AMD64=$(cat sha256_darwin_amd64.txt)" >> $GITHUB_ENV
+          echo "SHA256_DARWIN_ARM64=$(cat sha256_darwin_arm64.txt)" >> $GITHUB_ENV
+
+      - name: Create GitHub Release with `gh`
         run: |
           gh release create "${{ env.VERSION }}" \
-            dist/nr-linux-amd64 dist/nr-linux-arm64 \
+            bin/linux/amd64/nr bin/linux/arm64/nr \
+            bin/darwin/amd64/nr bin/darwin/arm64/nr \
             --title "Release ${{ env.VERSION }}" \
             --notes "Automated release of ${{ env.VERSION }}"
 
@@ -60,14 +60,32 @@ jobs:
         run: |
           cat <<EOF > Formula/node-run.rb
           class NodeRun < Formula
-            desc "Node Run (nr) - a fzf-like, monorepo-aware tool for easily running npm scripts"
+            desc "Node-run (nr) - Your task runner"
             homepage "https://github.com/silesky/node-run"
-            url "https://github.com/silesky/node-run/releases/download/${{ env.VERSION }}/nr-linux-amd64"
-            sha256 "${{ env.SHA256_AMD64 }}"
+            version "${{ env.VERSION }}"
+
+            if OS.mac?
+              if Hardware::CPU.intel?
+                url "https://github.com/silesky/node-run/releases/download/${{ env.VERSION }}/nr-darwin-amd64"
+                sha256 "${{ env.SHA256_DARWIN_AMD64 }}"
+              else
+                url "https://github.com/silesky/node-run/releases/download/${{ env.VERSION }}/nr-darwin-arm64"
+                sha256 "${{ env.SHA256_DARWIN_ARM64 }}"
+              end
+            else
+              if Hardware::CPU.intel?
+                url "https://github.com/silesky/node-run/releases/download/${{ env.VERSION }}/nr-linux-amd64"
+                sha256 "${{ env.SHA256_LINUX_AMD64 }}"
+              else
+                url "https://github.com/silesky/node-run/releases/download/${{ env.VERSION }}/nr-linux-arm64"
+                sha256 "${{ env.SHA256_LINUX_ARM64 }}"
+              end
+            end
+
             license "MIT"
 
             def install
-              bin.install "nr-linux-amd64" => "nr"
+              bin.install "nr"
             end
 
             test do
