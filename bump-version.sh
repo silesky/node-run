@@ -36,12 +36,6 @@ if [[ "$CONFIRM" == ^[Nn]$ ]]; then
   exit 1
 fi
 
-# Convert input to lowercase and check if it's "y"
-if [[ ! "$CONFIRM" =~ ^[Yy]$ ]]; then
-  echo "🚫 Tag creation canceled."
-  exit 1
-fi
-
 # Commit changes with a message
 COMMIT_MESSAGE=${2:-"Release $NEW_TAG"} # Default message if none provided
 git add . || echo "nothing to add"
