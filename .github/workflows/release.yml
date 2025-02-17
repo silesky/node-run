@@ -64,22 +64,12 @@ jobs:
             homepage "https://github.com/silesky/node-run"
             version "${{ env.VERSION }}"
 
-            if OS.mac?
-              if Hardware::CPU.intel?
-                url "https://github.com/silesky/node-run/releases/download/${{ env.VERSION }}/nr-darwin-amd64"
-                sha256 "${{ env.SHA256_DARWIN_AMD64 }}"
-              else
-                url "https://github.com/silesky/node-run/releases/download/${{ env.VERSION }}/nr-darwin-arm64"
-                sha256 "${{ env.SHA256_DARWIN_ARM64 }}"
-              end
+            if Hardware::CPU.arm?
+              url "https://github.com/silesky/node-run/releases/download/${{ env.VERSION }}/nr-darwin-amd64"
+              sha256 "${{ env.SHA256_DARWIN_AMD64 }}"
             else
-              if Hardware::CPU.intel?
-                url "https://github.com/silesky/node-run/releases/download/${{ env.VERSION }}/nr-linux-amd64"
-                sha256 "${{ env.SHA256_LINUX_AMD64 }}"
-              else
-                url "https://github.com/silesky/node-run/releases/download/${{ env.VERSION }}/nr-linux-arm64"
-                sha256 "${{ env.SHA256_LINUX_ARM64 }}"
-              end
+              url "https://github.com/silesky/node-run/releases/download/${{ env.VERSION }}/nr-darwin-arm64"
+              sha256 "${{ env.SHA256_DARWIN_ARM64 }}"
             end
 
             license "MIT"
