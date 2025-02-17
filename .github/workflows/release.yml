@@ -42,6 +42,8 @@ jobs:
           echo "SHA256_ARM64=$(cat sha256_arm64.txt)" >> $GITHUB_ENV
 
       - name: Create GitHub Release with gh CLI
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           gh release create "${{ env.VERSION }}" \
             dist/nr-linux-amd64 dist/nr-linux-arm64 \
