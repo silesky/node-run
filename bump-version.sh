@@ -27,14 +27,14 @@ fi
 NEW_TAG="v$MAJOR.$MINOR.$PATCH"
 
 # Ask for confirmation
-echo "⚠️  Are you sure you want to create and push tag: $NEW_TAG? (y/N)"
-read -r CONFIRM
+echo "Create and push tag: $NEW_TAG? (y/N)"
+# read -r CONFIRM
 
 # Convert input to lowercase and check if it's "y"
-if [[ ! "$CONFIRM" =~ ^[Yy]$ ]]; then
-  echo "🚫 Tag creation canceled."
-  exit 1
-fi
+# if [[ ! "$CONFIRM" =~ ^[Yy]$ ]]; then
+#   echo "🚫 Tag creation canceled."
+#   exit 1
+# fi
 
 # Commit changes with a message
 COMMIT_MESSAGE=${2:-"Release $NEW_TAG"} # Default message if none provided
