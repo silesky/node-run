@@ -85,7 +85,8 @@ jobs:
             license "MIT"
 
             def install
-              bin.install Dir["nr-*"].first => "nr"
+              bin.install "nr-darwin-#{Hardware::CPU.arch}" => "nr"
+              chmod "+x", bin/"nr"
             end
 
             test do
