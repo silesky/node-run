@@ -36,12 +36,16 @@ if [[ ! "$CONFIRM" =~ ^[Yy]$ ]]; then
   exit 1
 fi
 
+# Commit changes with a message
+COMMIT_MESSAGE=${2:-"Release $NEW_TAG"} # Default message if none provided
+git add .
+git commit -m "$COMMIT_MESSAGE"
+
 # Create an annotated tag with a message
-ANNOTATION=${2:-"Release $NEW_TAG"} # Default message if none provided
-git tag -a "$NEW_TAG" -m "$ANNOTATION"
+git tag -a "$NEW_TAG" -m "$COMMIT_MESSAGE"
 
-# Push the new tag
-git push origin "$NEW_TAG"
+# Push the commit and the new tag
+git push origin main --tags
 
-echo "✅ New annotated tag created and pushed: $NEW_TAG"
-echo "📜 Message: $ANNOTATION"
+echo "✅ New commit and annotated tag created and pushed: $NEW_TAG"
+echo "📜 Message: $COMMIT_MESSAGE"
