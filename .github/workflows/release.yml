@@ -75,8 +75,11 @@ jobs:
             license "MIT"
 
             def install
-              bin.install "nr-darwin-#{Hardware::CPU.arch}" => "nr"
-              chmod "+x", bin/"nr"
+              if Hardware::CPU.arm?
+                bin.install "nr-darwin-arm64" => "nr"
+              else
+                bin.install "nr-darwin-amd64" => "nr"
+              end
             end
 
             test do
