@@ -30,13 +30,12 @@ jobs:
         run: |
           make clean
           make build
-
       - name: Compute SHA256 Hashes
         run: |
-          sha256sum bin/linux/amd64/nr | awk '{ print $1 }' > sha256_linux_amd64.txt
-          sha256sum bin/linux/arm64/nr | awk '{ print $1 }' > sha256_linux_arm64.txt
-          sha256sum bin/darwin/amd64/nr | awk '{ print $1 }' > sha256_darwin_amd64.txt
-          sha256sum bin/darwin/arm64/nr | awk '{ print $1 }' > sha256_darwin_arm64.txt
+          sha256sum bin/nr-linux-amd64 | awk '{ print $1 }' > sha256_linux_amd64.txt
+          sha256sum bin/nr-linux-arm64 | awk '{ print $1 }' > sha256_linux_arm64.txt
+          sha256sum bin/nr-darwin-amd64 | awk '{ print $1 }' > sha256_darwin_amd64.txt
+          sha256sum bin/nr-darwin-arm64 | awk '{ print $1 }' > sha256_darwin_arm64.txt
 
           echo "SHA256_LINUX_AMD64=$(cat sha256_linux_amd64.txt)" >> $GITHUB_ENV
           echo "SHA256_LINUX_ARM64=$(cat sha256_linux_arm64.txt)" >> $GITHUB_ENV
@@ -46,8 +45,8 @@ jobs:
       - name: Create GitHub Release with `gh`
         run: |
           gh release create "${{ env.VERSION }}" \
-            bin/linux/amd64/nr bin/linux/arm64/nr \
-            bin/darwin/amd64/nr bin/darwin/arm64/nr \
+            bin/nr-linux-amd64 bin/nr-linux-arm64 \
+            bin/nr-darwin-amd64 bin/nr-darwin-arm64 \
             --title "Release ${{ env.VERSION }}" \
             --notes "Automated release of ${{ env.VERSION }}"
 
