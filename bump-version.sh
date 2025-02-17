@@ -27,14 +27,7 @@ fi
 NEW_TAG="v$MAJOR.$MINOR.$PATCH"
 
 # Ask for confirmation
-echo "Create and push tag: $NEW_TAG? (Press any key to confirm, 'n' to cancel)"
-read -r -n 1 CONFIRM
-
-# Check if the input is 'n' or 'N'
-if [[ "$CONFIRM" == ^[Nn]$ ]]; then
-  echo "🚫 Tag creation canceled."
-  exit 1
-fi
+echo "Create and push tag: $NEW_TAG"
 
 # Commit changes with a message
 COMMIT_MESSAGE=${2:-"Release $NEW_TAG"} # Default message if none provided
