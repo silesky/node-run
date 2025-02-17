@@ -85,7 +85,7 @@ jobs:
             license "MIT"
 
             def install
-              bin.install "nr"
+              bin.install Dir["nr-*"].first => "nr"
             end
 
             test do
