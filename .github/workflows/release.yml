@@ -65,11 +65,11 @@ jobs:
             version "${{ env.VERSION }}"
 
             if Hardware::CPU.arm?
-              url "https://github.com/silesky/node-run/releases/download/${{ env.VERSION }}/nr-darwin-amd64"
-              sha256 "${{ env.SHA256_DARWIN_AMD64 }}"
-            else
               url "https://github.com/silesky/node-run/releases/download/${{ env.VERSION }}/nr-darwin-arm64"
               sha256 "${{ env.SHA256_DARWIN_ARM64 }}"
+            else
+              url "https://github.com/silesky/node-run/releases/download/${{ env.VERSION }}/nr-darwin-amd64"
+              sha256 "${{ env.SHA256_DARWIN_AMD64 }}"
             end
 
             license "MIT"
