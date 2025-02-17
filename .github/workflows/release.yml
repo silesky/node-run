@@ -53,7 +53,7 @@ jobs:
       - name: Checkout Homebrew Tap Repository
         uses: actions/checkout@v4
         with:
-          repository: silesky/homebrew-node-run
+          repository: silesky/tap
           token: ${{ secrets.HOMEBREW_TAP_GITHUB_TOKEN }}
 
       - name: Update Homebrew Formula
