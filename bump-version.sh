@@ -28,6 +28,12 @@ NEW_TAG="v$MAJOR.$MINOR.$PATCH"
 
 # Ask for confirmation
 echo "Create and push tag: $NEW_TAG"
+read -p "Are you sure you want to proceed? (y/n) " -n 1 -r
+echo
+if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+  echo "Aborted."
+  exit 1
+fi
 
 # Commit changes with a message
 COMMIT_MESSAGE=${2:-"Release $NEW_TAG"} # Default message if none provided
