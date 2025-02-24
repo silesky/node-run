@@ -38,9 +38,9 @@ fi
 # Commit changes with a message
 COMMIT_MESSAGE=${2:-"Release $NEW_TAG"} # Default message if none provided
 git add . || echo "nothing to add"
-git commit -m "$COMMIT_MESSAGE" --allow-empty
+git commit -m --allow-empty "$COMMIT_MESSAGE"
 
-# Create an annotated tag with a message
+# Create an annotated tag with a messageg
 git tag -a "$NEW_TAG" -m "$COMMIT_MESSAGE"
 
 # Push the commit and the new tag
