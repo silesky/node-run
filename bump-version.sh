@@ -3,6 +3,16 @@
 # Exit on error
 set -e
 
+# Check if the current branch is main
+CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+if [ "$CURRENT_BRANCH" != "main" ]; then
+  echo "Error: You are not on the main branch. Please switch to the main branch and try again."
+  exit 1
+fi
+
+# Pull, to ensure caught up
+git pull --ff-only
+
 # Get the latest tag (default to v0.0.0 if none exists)
 LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
 
@@ -27,6 +37,7 @@ fi
 NEW_TAG="v$MAJOR.$MINOR.$PATCH"
 
 # Ask for confirmation
+echo "--------"
 echo "Create and push tag: $NEW_TAG"
 read -p "Are you sure you want to proceed? (y/n) " -n 1 -r
 echo
