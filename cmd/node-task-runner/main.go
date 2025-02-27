@@ -20,7 +20,7 @@ func main() {
 		return
 	}
 
-	// eg: "nr --debug test" -> "test" = initialInut
+	// eg: "nrun --debug test" -> "test" = initialInut
 	var initialInput string
 	if len(flag.Args()) > 0 {
 		initialInput = flag.Args()[0]

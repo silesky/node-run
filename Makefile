@@ -1,5 +1,5 @@
 # Variables
-BINARY_NAME = nr
+BINARY_NAME = nrun
 BUILD_DIR = bin
 
 # Default target
@@ -7,7 +7,7 @@ all: build
 
 
 # Variables
-BINARY_NAME = nr
+BINARY_NAME = nrun
 BUILD_DIR = bin
 
 # Default target

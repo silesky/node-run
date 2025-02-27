@@ -19,7 +19,7 @@ brew install node-run
 
 ```
 $> cd ~/projects/my-node-package
-$> nr
+$> nrun
 ```
 
 ## Development

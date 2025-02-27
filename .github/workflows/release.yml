@@ -32,10 +32,10 @@ jobs:
           make build
       - name: Compute SHA256 Hashes
         run: |
-          sha256sum bin/nr-linux-amd64 | awk '{ print $1 }' > sha256_linux_amd64.txt
-          sha256sum bin/nr-linux-arm64 | awk '{ print $1 }' > sha256_linux_arm64.txt
-          sha256sum bin/nr-darwin-amd64 | awk '{ print $1 }' > sha256_darwin_amd64.txt
-          sha256sum bin/nr-darwin-arm64 | awk '{ print $1 }' > sha256_darwin_arm64.txt
+          sha256sum bin/nrun-linux-amd64 | awk '{ print $1 }' > sha256_linux_amd64.txt
+          sha256sum bin/nrun-linux-arm64 | awk '{ print $1 }' > sha256_linux_arm64.txt
+          sha256sum bin/nrun-darwin-amd64 | awk '{ print $1 }' > sha256_darwin_amd64.txt
+          sha256sum bin/nrun-darwin-arm64 | awk '{ print $1 }' > sha256_darwin_arm64.txt
 
           echo "SHA256_LINUX_AMD64=$(cat sha256_linux_amd64.txt)" >> $GITHUB_ENV
           echo "SHA256_LINUX_ARM64=$(cat sha256_linux_arm64.txt)" >> $GITHUB_ENV
@@ -45,8 +45,8 @@ jobs:
       - name: Create GitHub Release with `gh`
         run: |
           gh release create "${{ env.VERSION }}" \
-            bin/nr-linux-amd64 bin/nr-linux-arm64 \
-            bin/nr-darwin-amd64 bin/nr-darwin-arm64 \
+            bin/nrun-linux-amd64 bin/nrun-linux-arm64 \
+            bin/nrun-darwin-amd64 bin/nrun-darwin-arm64 \
             --title "Release ${{ env.VERSION }}" \
             --notes "Automated release of ${{ env.VERSION }}"
 
@@ -60,15 +60,15 @@ jobs:
         run: |
           cat <<EOF > Formula/node-run.rb
           class NodeRun < Formula
-            desc "Node-run (nr) - Your task runner"
+            desc "Node-run (nrun) - Your task runner"
             homepage "https://github.com/silesky/node-run"
             version "${{ env.VERSION }}"
 
             if Hardware::CPU.arm?
-              url "https://github.com/silesky/node-run/releases/download/${{ env.VERSION }}/nr-darwin-arm64"
+              url "https://github.com/silesky/node-run/releases/download/${{ env.VERSION }}/nrun-darwin-arm64"
               sha256 "${{ env.SHA256_DARWIN_ARM64 }}"
             else
-              url "https://github.com/silesky/node-run/releases/download/${{ env.VERSION }}/nr-darwin-amd64"
+              url "https://github.com/silesky/node-run/releases/download/${{ env.VERSION }}/nrun-darwin-amd64"
               sha256 "${{ env.SHA256_DARWIN_AMD64 }}"
             end
 
@@ -76,14 +76,14 @@ jobs:
 
             def install
               if Hardware::CPU.arm?
-                bin.install "nr-darwin-arm64" => "nr"
+                bin.install "nrun-darwin-arm64" => "nrun"
               else
-                bin.install "nr-darwin-amd64" => "nr"
+                bin.install "nrun-darwin-amd64" => "nrun"
               end
             end
 
             test do
-              system "#{bin}/nr", "--help"
+              system "#{bin}/nrun", "--help"
             end
           end
           EOF
