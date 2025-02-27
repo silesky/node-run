@@ -60,7 +60,7 @@ jobs:
         run: |
           cat <<EOF > Formula/node-run.rb
           class NodeRun < Formula
-            desc "Node-run (nrun) - Your task runner"
+            desc "node-run (nrun) - An fzf-like npm script runner with monorepo support"
             homepage "https://github.com/silesky/node-run"
             version "${{ env.VERSION }}"
 
