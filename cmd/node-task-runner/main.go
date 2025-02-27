@@ -7,6 +7,7 @@ import (
 	"os"
 )
 
+// TODO
 const VERSION = "1.0.0"
 
 func main() {
@@ -35,7 +36,9 @@ func main() {
 }
 
 func usage() {
-	fmt.Fprintf(os.Stderr, "\nUsage of nt \n")
+	fmt.Print("Usage: nrun [options] [initial search input]" + "\n")
+	fmt.Print("Example:" + "\n" + "- nrun" + "\n" + "- nrun test" + "\n")
+	fmt.Print("Options:" + "\n")
 	flag.VisitAll(func(f *flag.Flag) {
 		// override to show e.g (--flag) instead of -flag
 		fmt.Fprintf(os.Stderr, "  --%s\n\t%s\n", f.Name, f.Usage)
