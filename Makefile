@@ -49,7 +49,6 @@ help:
 		@grep '^[^#[:space:]].*:' Makefile
 		
 # Bump the version and push to github
-.PHONY: version
 version:
 		bash ./bump-version.sh
 
