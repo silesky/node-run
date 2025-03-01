@@ -1,8 +1,8 @@
 # node-run
 
-An fzf-like npm script runner with monorepo support. Written in go.
+An fzf-like npm script runner with monorepo support.
 
-Supports all modern package managers:
+Supports modern package managers:
 
 - npm ✅
 - pnpm ✅
@@ -10,34 +10,34 @@ Supports all modern package managers:
 
 ## Installation
 
-```
-brew tap silesky/tap
-brew install node-run
+```sh
+$> brew tap silesky/tap
+$> brew install node-run
 ```
 
 ## Usage
 
-```
-$> cd ~/projects/my-node-package
+```sh
+$> cd ~/my-projects/my-node-package
 $> nrun
 ```
 
 ## Development
 
-### Build & Execute
+### Test
 
 ```sh
-make run ARGS=--cwd=~/projects/monorepo-example
+$> make test
 ```
 
-### Build Only
+### Run
 
 ```sh
-make build # See artifacts in `./bin`
+$> make run ARGS=--cwd=~/projects/monorepo-example
 ```
 
-### Releasing
+### Release
 
 ```sh
-make version # Bump tag + trigger CI
+$> make version # Bump version via git tag + push (trigger CI job in .github/workflows)
 ```
