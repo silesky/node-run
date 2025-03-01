@@ -67,10 +67,10 @@ jobs:
             if OS.mac? && Hardware::CPU.arm?
               url "https://github.com/silesky/node-run/releases/download/${{ env.VERSION }}/nrun-darwin-arm64"
               sha256 "${{ env.SHA256_DARWIN_ARM64 }}"
-            elif OS.mac? && Hardware::CPU.intel?
+            elsif OS.mac? && Hardware::CPU.intel?
               url "https://github.com/silesky/node-run/releases/download/${{ env.VERSION }}/nrun-darwin-amd64"
               sha256 "${{ env.SHA256_DARWIN_AMD64 }}"
-            elif OS.linux? && Hardware::CPU.arm?
+            elsif OS.linux? && Hardware::CPU.arm?
               url "https://github.com/silesky/node-run/releases/download/${{ env.VERSION }}/nrun-linux-arm64"
               sha256 "${{ env.SHA256_LINUX_ARM64 }}"
             else
@@ -83,9 +83,9 @@ jobs:
             def install
               if OS.mac? && Hardware::CPU.arm?
                 bin.install "nrun-darwin-arm64" => "nrun"
-              elif OS.mac? && Hardware::CPU.intel?
+              elsif OS.mac? && Hardware::CPU.intel?
                 bin.install "nrun-darwin-amd64" => "nrun"
-              elif OS.linux? && Hardware::CPU.arm?
+              elsif OS.linux? && Hardware::CPU.arm?
                 bin.install "nrun-linux-arm64" => "nrun"
               else
                 bin.install "nrun-linux-amd64" => "nrun"
