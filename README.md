@@ -39,5 +39,5 @@ make build # See artifacts in `./bin`
 ### Releasing
 
 ```sh
-make version # Bumps the tag, which
+make version # Bump tag + trigger CI
 ```
