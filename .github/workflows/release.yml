@@ -64,21 +64,31 @@ jobs:
             homepage "https://github.com/silesky/node-run"
             version "${{ env.VERSION }}"
 
-            if Hardware::CPU.arm?
+            if OS.mac? && Hardware::CPU.arm?
               url "https://github.com/silesky/node-run/releases/download/${{ env.VERSION }}/nrun-darwin-arm64"
               sha256 "${{ env.SHA256_DARWIN_ARM64 }}"
-            else
+            elif OS.mac? && Hardware::CPU.intel?
               url "https://github.com/silesky/node-run/releases/download/${{ env.VERSION }}/nrun-darwin-amd64"
               sha256 "${{ env.SHA256_DARWIN_AMD64 }}"
+            elif OS.linux? && Hardware::CPU.arm?
+              url "https://github.com/silesky/node-run/releases/download/${{ env.VERSION }}/nrun-linux-arm64"
+              sha256 "${{ env.SHA256_LINUX_ARM64 }}"
+            else
+              url "https://github.com/silesky/node-run/releases/download/${{ env.VERSION }}/nrun-linux-amd64"
+              sha256 "${{ env.SHA256_LINUX_AMD64 }}"
             end
 
             license "MIT"
 
             def install
-              if Hardware::CPU.arm?
+              if OS.mac? && Hardware::CPU.arm?
                 bin.install "nrun-darwin-arm64" => "nrun"
-              else
+              elif OS.mac? && Hardware::CPU.intel?
                 bin.install "nrun-darwin-amd64" => "nrun"
+              elif OS.linux? && Hardware::CPU.arm?
+                bin.install "nrun-linux-arm64" => "nrun"
+              else
+                bin.install "nrun-linux-amd64" => "nrun"
               end
             end
 
