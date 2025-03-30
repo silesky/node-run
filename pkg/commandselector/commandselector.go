@@ -191,7 +191,7 @@ func newStyles() Styles {
 	return Styles{
 		searchHighlightText: lipgloss.NewStyle().Foreground(Colors.magenta),
 		container:           lipgloss.NewStyle(),
-		helpText:            lipgloss.NewStyle().Foreground(Colors.charcoal),
+		helpText:            lipgloss.NewStyle().Foreground(Colors.grey),
 		commandText:         lipgloss.NewStyle().Foreground(Colors.white),
 		filterText:          lipgloss.NewStyle().Foreground(Colors.purple),
 		helpTextHighlight:   lipgloss.NewStyle().Foreground(Colors.white).Bold(true),

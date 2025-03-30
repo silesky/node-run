@@ -3,44 +3,45 @@ package commandselector
 import "github.com/charmbracelet/lipgloss"
 
 type TerminalColors struct {
-	magenta  lipgloss.AdaptiveColor
-	charcoal lipgloss.AdaptiveColor
-	blue     lipgloss.AdaptiveColor
-	purple   lipgloss.AdaptiveColor
-	white    lipgloss.AdaptiveColor
-	yellow   lipgloss.AdaptiveColor
-	black    lipgloss.AdaptiveColor
+	magenta lipgloss.AdaptiveColor
+	grey    lipgloss.AdaptiveColor
+	blue    lipgloss.AdaptiveColor
+	purple  lipgloss.AdaptiveColor
+	white   lipgloss.AdaptiveColor
+	yellow  lipgloss.AdaptiveColor
+	black   lipgloss.AdaptiveColor
 }
 
+// Light and Dark correspond to the color that will display based on the terminal background
 var (
 	Colors = TerminalColors{
 		black: lipgloss.AdaptiveColor{
-			Light: "#000000", // Black for light backgrounds
-			Dark:  "#ffffff", // White for dark backgrounds
+			Light: "#000000",
+			Dark:  "#ffffff",
 		},
 		white: lipgloss.AdaptiveColor{
-			Light: "#000000", // Black for light backgrounds
-			Dark:  "#ffffff", // White for dark backgrounds
+			Light: "#000000",
+			Dark:  "#ffffff",
 		},
 		magenta: lipgloss.AdaptiveColor{
-			Light: "#8b005d", // Dark magenta for light backgrounds
-			Dark:  "#ff79c6", // Bright magenta for dark backgrounds
+			Light: "#8b005d",
+			Dark:  "#ff79c6",
 		},
-		charcoal: lipgloss.AdaptiveColor{
-			Light: "#222222", // Dark gray for light backgrounds
-			Dark:  "#717171", // Light gray for dark backgrounds
+		grey: lipgloss.AdaptiveColor{
+			Light: "#222222",
+			Dark:  "#717171",
 		},
 		blue: lipgloss.AdaptiveColor{
-			Light: "#003366", // Dark blue for light backgrounds
-			Dark:  "#8be9fd", // Bright cyan-blue for dark backgrounds
+			Light: "#003366",
+			Dark:  "#8be9fd",
 		},
 		purple: lipgloss.AdaptiveColor{
-			Light: "#4b0082", // Dark purple for light backgrounds
-			Dark:  "#bd93f9", // Soft purple for dark backgrounds
+			Light: "#4b0082",
+			Dark:  "#bd93f9",
 		},
 		yellow: lipgloss.AdaptiveColor{
-			Light: "#8b8000", // Dark yellow for light backgrounds
-			Dark:  "#f1fa8c", // Bright yellow for dark backgrounds
+			Light: "#8b8000",
+			Dark:  "#f1fa8c",
 		},
 	}
 )

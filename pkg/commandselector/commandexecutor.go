@@ -95,7 +95,7 @@ func (ir *InteractivePackageCommandRunner) View() string {
 		Padding(0, 1)
 
 	FooterCommandStyle := lipgloss.NewStyle().
-		Foreground(Colors.charcoal)
+		Foreground(Colors.grey)
 	template := `
 %s
 
