@@ -69,7 +69,7 @@ func renderOutput(command CommandOutputMsg) string {
 	}
 
 	timeStyle := lipgloss.NewStyle().
-		Foreground(lipgloss.Color(Colors.purple)).
+		Foreground(Colors.purple).
 		Bold(true)
 
 	timeContainerStyle := lipgloss.NewStyle().Border(lipgloss.NormalBorder()).Padding(0, 1)
@@ -81,21 +81,21 @@ func renderOutput(command CommandOutputMsg) string {
 func (ir *InteractivePackageCommandRunner) View() string {
 	titleStyle := lipgloss.NewStyle().
 		Bold(true).
-		Foreground(lipgloss.Color(Colors.white)).
-		Background(lipgloss.Color(Colors.purple)).
+		Foreground(Colors.white).
+		Background(Colors.purple).
 		Padding(1, 1)
 
 	commandStyle := lipgloss.NewStyle().
-		Foreground(lipgloss.Color(Colors.purple)).
+		Foreground(Colors.purple).
 		Bold(true)
 
 	helpCommandsStyle := lipgloss.NewStyle().
-		Foreground(lipgloss.Color(Colors.white)).
-		Background(lipgloss.Color(Colors.purple)).
+		Foreground(Colors.white).
+		Background(Colors.purple).
 		Padding(0, 1)
 
 	FooterCommandStyle := lipgloss.NewStyle().
-		Foreground(lipgloss.Color(Colors.charcoal))
+		Foreground(Colors.charcoal)
 	template := `
 %s
 

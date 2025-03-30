@@ -74,7 +74,7 @@ func (m *TeaCommandModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func renderQuit(styles Styles, lines []string) string {
 	var message string
 	for _, m := range lines {
-		message += styles.gray.Render(m) + "\n"
+		message += styles.helpText.Render(m) + "\n"
 	}
 	return message
 }
@@ -82,7 +82,7 @@ func renderQuit(styles Styles, lines []string) string {
 func (m TeaCommandModel) View() string {
 	var lines strings.Builder
 
-	lines.WriteString(m.styles.purple.Render("\nFilter: "))
+	lines.WriteString(m.styles.filterText.Render("\nFilter: "))
 	lines.WriteString(m.input.View())
 	lines.WriteString("\n\n")
 
@@ -100,10 +100,10 @@ func (m TeaCommandModel) View() string {
 
 		// Format the line for the current command
 		line := fmt.Sprintf("%s [%s] %s (%s)",
-			cursor, cmd.PackageName, m.styles.purple.Render(cmd.CommandName), m.styles.gray.Render(cmd.CommandValue))
+			cursor, cmd.PackageName, m.styles.filterText.Render(cmd.CommandName), m.styles.helpText.Render(cmd.CommandValue))
 		line = strings.Replace(line, cursor, "", 1)
 		if m.cursor == i {
-			lines.WriteString(cursor + m.styles.magenta.Render(line))
+			lines.WriteString(cursor + m.styles.searchHighlightText.Render(line))
 		} else {
 			lines.WriteString(cursor + line)
 		}
@@ -117,11 +117,11 @@ func (m TeaCommandModel) View() string {
 
 	// Display pagination information
 	paginationInfo := fmt.Sprintf("Page %d of %d", currentPage, totalPages)
-	lines.WriteString("\n" + m.styles.gray.Render(paginationInfo))
+	lines.WriteString("\n" + m.styles.helpText.Render(paginationInfo))
 
 	// if no results, show no results found. otherwise, only show results message if filter is active.
 	filterCommand := fmt.Sprintf("Displaying %d of %d results", len(m.filtered), len(m.commands))
-	lines.WriteString("\n" + m.styles.gray.Render(filterCommand))
+	lines.WriteString("\n" + m.styles.helpText.Render(filterCommand))
 
 	quitHelp := renderQuit(m.styles, []string{
 		"Press left/right to navigate pages.", "Press enter to run.", "Press ctrl+r to run interactively (beta).", "Press ctrl+c to quit.",
@@ -161,26 +161,19 @@ func filterCommands(commands []Command, query string) []Command {
 }
 
 type Styles struct {
-	magenta   lipgloss.Style
-	container lipgloss.Style
-	gray      lipgloss.Style
-	purple    lipgloss.Style
-	yellow    lipgloss.Style
+	searchHighlightText lipgloss.Style
+	container           lipgloss.Style
+	helpText            lipgloss.Style
+	filterText          lipgloss.Style
 }
 
 func newStyles() Styles {
-	// https://hexdocs.pm/color_palette/ansi_color_codes.html
-	magenta := lipgloss.Color(Colors.magenta)
-	charcoal := lipgloss.Color(Colors.charcoal)
-	purple := lipgloss.Color(Colors.purple)
-	yellow := lipgloss.Color(Colors.yellow)
 
 	return Styles{
-		magenta:   lipgloss.NewStyle().Foreground(magenta),
-		container: lipgloss.NewStyle(),
-		gray:      lipgloss.NewStyle().Foreground(charcoal),
-		purple:    lipgloss.NewStyle().Foreground(purple),
-		yellow:    lipgloss.NewStyle().Foreground(yellow),
+		searchHighlightText: lipgloss.NewStyle().Foreground(Colors.magenta),
+		container:           lipgloss.NewStyle(),
+		helpText:            lipgloss.NewStyle().Foreground(Colors.white),
+		filterText:          lipgloss.NewStyle().Foreground(Colors.purple),
 	}
 }
 
