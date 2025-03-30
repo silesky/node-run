@@ -28,7 +28,7 @@ var (
 		},
 		charcoal: lipgloss.AdaptiveColor{
 			Light: "#222222", // Dark gray for light backgrounds
-			Dark:  "#dddddd", // Light gray for dark backgrounds
+			Dark:  "#717171", // Light gray for dark backgrounds
 		},
 		blue: lipgloss.AdaptiveColor{
 			Light: "#003366", // Dark blue for light backgrounds

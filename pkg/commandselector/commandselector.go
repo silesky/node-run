@@ -3,6 +3,7 @@ package commandselector
 import (
 	"errors"
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/charmbracelet/bubbles/textinput"
@@ -39,6 +40,7 @@ func (m *TeaCommandModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.quitting = true
 			return m, tea.Quit
 		case "ctrl+r":
+			fmt.Println("Running command:", m.filtered[m.cursor].CommandValue)
 			m.runner = true
 			return m, tea.Quit
 		case "enter":
@@ -99,8 +101,8 @@ func (m TeaCommandModel) View() string {
 		}
 
 		// Format the line for the current command
-		line := fmt.Sprintf("%s [%s] %s (%s)",
-			cursor, cmd.PackageName, m.styles.filterText.Render(cmd.CommandName), m.styles.helpText.Render(cmd.CommandValue))
+		line := fmt.Sprintf("%s [%s] %s ::: %s",
+			cursor, cmd.PackageName, m.styles.filterText.Render(cmd.CommandName), m.styles.commandText.Render(cmd.CommandValue))
 		line = strings.Replace(line, cursor, "", 1)
 		if m.cursor == i {
 			lines.WriteString(cursor + m.styles.searchHighlightText.Render(line))
@@ -115,16 +117,31 @@ func (m TeaCommandModel) View() string {
 	totalPages := (len(m.filtered) + m.itemsPerPage - 1) / m.itemsPerPage
 	currentPage := m.currentPage + 1
 
-	// Display pagination information
-	paginationInfo := fmt.Sprintf("Page %d of %d", currentPage, totalPages)
-	lines.WriteString("\n" + m.styles.helpText.Render(paginationInfo))
+	renderHighlightedNumber := func(page int) string {
+		return m.styles.helpTextHighlight.Render(strconv.Itoa(page))
+	}
 
-	// if no results, show no results found. otherwise, only show results message if filter is active.
-	filterCommand := fmt.Sprintf("Displaying %d of %d results", len(m.filtered), len(m.commands))
-	lines.WriteString("\n" + m.styles.helpText.Render(filterCommand))
+	paginationInfo := ""
+	if currentPage <= totalPages {
+		paginationInfo = fmt.Sprintf("Page %s of %s",
+			renderHighlightedNumber(currentPage),
+			renderHighlightedNumber(totalPages),
+		)
+	}
+
+	// // if no results, show no results found. otherwise, only show results message if filter is active.
+	// filterCommand := fmt.Sprintf("Showing %s of %s commands",
+	// 	renderHighlightedNumber(len(m.filtered)),
+	// 	renderHighlightedNumber(len(m.commands)),
+	// )
+
+	lines.WriteString("\n" + paginationInfo)
+	// lines.WriteString("\n" + filterCommand)
 
 	quitHelp := renderQuit(m.styles, []string{
-		"Press left/right to navigate pages.", "Press enter to run.", "Press ctrl+r to run interactively (beta).", "Press ctrl+c to quit.",
+		"Press left/right to navigate pages.", "Press enter to run.",
+		// "Press ctrl+r to run interactively (beta).",
+		"Press ctrl+c to quit.",
 	})
 
 	lines.WriteString("\n\n" + quitHelp + "\n")
@@ -165,6 +182,8 @@ type Styles struct {
 	container           lipgloss.Style
 	helpText            lipgloss.Style
 	filterText          lipgloss.Style
+	commandText         lipgloss.Style
+	helpTextHighlight   lipgloss.Style
 }
 
 func newStyles() Styles {
@@ -172,8 +191,10 @@ func newStyles() Styles {
 	return Styles{
 		searchHighlightText: lipgloss.NewStyle().Foreground(Colors.magenta),
 		container:           lipgloss.NewStyle(),
-		helpText:            lipgloss.NewStyle().Foreground(Colors.white),
+		helpText:            lipgloss.NewStyle().Foreground(Colors.charcoal),
+		commandText:         lipgloss.NewStyle().Foreground(Colors.white),
 		filterText:          lipgloss.NewStyle().Foreground(Colors.purple),
+		helpTextHighlight:   lipgloss.NewStyle().Foreground(Colors.white).Bold(true),
 	}
 }
 
