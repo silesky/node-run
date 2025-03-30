@@ -40,7 +40,6 @@ func (m *TeaCommandModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.quitting = true
 			return m, tea.Quit
 		case "ctrl+r":
-			fmt.Println("Running command:", m.filtered[m.cursor].CommandValue)
 			m.runner = true
 			return m, tea.Quit
 		case "enter":
@@ -50,9 +49,8 @@ func (m *TeaCommandModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.cursor--
 			} else if m.currentPage >= 1 {
 				m.currentPage--
-				m.cursor = 0
+				m.cursor = m.itemsPerPage - 1
 			}
-
 		case "down":
 			if m.cursor < len(m.filtered)-1 {
 				m.cursor++
