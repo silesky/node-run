@@ -144,7 +144,7 @@ func (m TeaCommandModel) View() string {
 		"Press ctrl+c to quit.",
 	})
 
-	lines.WriteString("\n\n" + quitHelp + "\n")
+	lines.WriteString("\n\n" + quitHelp)
 	return m.styles.container.Render(lines.String())
 }
 
