@@ -48,11 +48,20 @@ func (m *TeaCommandModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "up":
 			if m.cursor > 0 {
 				m.cursor--
+			} else if m.currentPage >= 1 {
+				m.currentPage--
+				m.cursor = 0
 			}
+
 		case "down":
 			if m.cursor < len(m.filtered)-1 {
 				m.cursor++
 			}
+			if m.cursor > (m.itemsPerPage - 1) {
+				m.currentPage++
+				m.cursor = 0
+			}
+
 		case "left":
 			if m.currentPage > 0 {
 				m.currentPage--
@@ -228,7 +237,7 @@ func DisplayCommandSelector(commands []Command, initialInputValue string) (Comma
 	}
 
 	if m.cursor >= 0 && m.cursor < len(m.filtered) && !m.quitting {
-		cmd := m.filtered[m.cursor]
+		cmd := getSelectedCommand(m)
 		cmd.ExecOptions.WithRunner = m.runner
 		return cmd, nil
 	}
@@ -238,4 +247,10 @@ func DisplayCommandSelector(commands []Command, initialInputValue string) (Comma
 	}
 
 	return Command{}, fmt.Errorf("no command selected")
+}
+
+func getSelectedCommand(m *TeaCommandModel) Command {
+	calculatedIndex := (m.currentPage * m.itemsPerPage) + m.cursor
+	cmd := m.filtered[calculatedIndex]
+	return cmd
 }
