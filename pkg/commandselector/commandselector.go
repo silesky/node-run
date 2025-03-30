@@ -197,7 +197,7 @@ func DisplayCommandSelector(commands []Command, initialInputValue string) (Comma
 		filtered:     filtered,
 		input:        ti,
 		styles:       newStyles(),
-		itemsPerPage: 50, // Set the number of items per page
+		itemsPerPage: 25, // Set the number of items per page
 	}
 
 	program := tea.NewProgram(m)
