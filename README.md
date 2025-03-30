@@ -7,6 +7,7 @@ Supports modern package managers:
 - npm ✅
 - pnpm ✅
 - yarn ✅
+- Bun ✅
 
 ## Installation
 

@@ -125,6 +125,8 @@ func createCLICommand(proj Project, command Command) string {
 		return fmt.Sprintf("pnpm --prefix %s run %s", command.PackageDir, command.CommandName)
 	case Yarn:
 		return fmt.Sprintf("yarn --cwd %s %s", command.PackageDir, command.CommandName)
+	case Bun:
+		return fmt.Sprintf("bun --cwd %s %s", command.PackageDir, command.CommandName)
 	default:
 		log.Fatalf("invariant -- unknown package manager: %s", proj.Manager)
 		return ""

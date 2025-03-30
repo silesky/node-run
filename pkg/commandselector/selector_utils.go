@@ -202,6 +202,7 @@ func detectPackageManager(dirPath string) (PackageManager, error) {
 		yarnLockfile    = "yarn.lock"
 		pnpmLockfile    = "pnpm-lock.yaml"
 		packageLockfile = "package-lock.json"
+		bunLockfile     = "bun.lockb"
 	)
 	if contents, err := os.ReadDir(dirPath); err != nil {
 		return Npm, err
@@ -214,6 +215,8 @@ func detectPackageManager(dirPath string) (PackageManager, error) {
 				return Yarn, nil
 			case pnpmLockfile:
 				return Pnpm, nil
+			case bunLockfile:
+				return Bun, nil
 			}
 		}
 		return Npm, nil
