@@ -2,6 +2,8 @@
 
 An fzf-like npm script runner with monorepo support.
 
+![nrun basic usage](img/basic-1.gif)
+
 Supports modern package managers:
 
 - npm ✅
