@@ -2,19 +2,15 @@
 BINARY_NAME = nrun
 BUILD_DIR = bin
 
-# Default target
-all: build
-
 # Variables
 BINARY_NAME = nrun
 BUILD_DIR = bin
 VERSION ?= "0.0.0"
 
-# Default target
-all: build
+help: ## Lists all available make tasks and some short documentation about them
+	@grep -E '^[a-zA-Z0-9_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-24s\033[0m %s\n", $$1, $$2}'
 
-# Build for all architectures
-build: build-linux-amd64 build-linux-arm64 build-mac-amd64 build-mac-arm64
+build: build-linux-amd64 build-linux-arm64 build-mac-amd64 build-mac-arm64 ## Build all binaries
 	@echo "Finished building $(BINARY_NAME)@$(VERSION)."
 
 build-linux-amd64:
@@ -29,28 +25,19 @@ build-mac-amd64:
 build-mac-arm64:
 	@$(MAKE) build-platform GOOS=darwin GOARCH=arm64 
 
-# e.g. make build-platform goos=OS goarch=architecture
-build-platform:
+build-platform: ## Build for a specific platform. e.g. make build-platform goos=OS goarch=architecture
 	@echo "🚀 Building for $(GOOS) $(GOARCH)..."
 	GOOS=$(GOOS) GOARCH=$(GOARCH) go build -ldflags "-X main.VERSION=$(VERSION)" -o $(BUILD_DIR)/$(BINARY_NAME)-$(GOOS)-$(GOARCH) ./cmd/node-task-runner $(ARGS) 
 
-# Run the binary
-run: 
+run: ## Run node-task-runner without building
 	go run ./cmd/node-task-runner $(ARGS)
 
-# Clean the build directory
-clean:
+clean: ## Clean the build directory
 	rm -rf $(BUILD_DIR)
 
-# Run all tests - e.g. make test ARGS="-run TestSpecificFunction"
-test:
+test: ## Run all tests - e.g. make test ARGS="-run TestSpecificFunction"
 	go test ./... -v $(ARGS) 
-
-# List the make targets
-help:                                                                                                                    
-	@grep '^[^#[:space:]].*:' Makefile
 		
-# Bump the version and push to github
-version:
+version: ## Bump the version and push to github
 	bash ./bump-version.sh
 

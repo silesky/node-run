@@ -2,7 +2,7 @@
 
 An fzf-like npm script runner with monorepo support. 🦋
 
-![nrun basic usage](img/basic-1.gif)
+![nrun basic usage](img/basic-1-crop.gif)
 
 🚩 Lightning fast ⚡️
 
