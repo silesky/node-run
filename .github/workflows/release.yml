@@ -29,7 +29,7 @@ jobs:
       - name: Build Binaries for macOS & Linux
         run: |
           make clean
-          make build
+          make build VERSION=${{ env.VERSION }}
       - name: Compute SHA256 Hashes
         run: |
           sha256sum bin/nrun-linux-amd64 | awk '{ print $1 }' > sha256_linux_amd64.txt

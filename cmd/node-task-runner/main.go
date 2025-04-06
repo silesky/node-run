@@ -7,8 +7,7 @@ import (
 	"os"
 )
 
-// TODO
-const VERSION = "1.0.0"
+var VERSION = "dev" // This is overridden during build time using ldflags during release
 
 func main() {
 	flags := getFlags()
