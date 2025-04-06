@@ -16,6 +16,25 @@ $> brew tap silesky/tap
 $> brew install node-run
 ```
 
+### Commands
+
+```
+$> nrun --help
+Usage: nrun [options] [initial search input]
+Example:
+- nrun
+- nrun my-search-string
+Options:
+  --cwd
+        Specify current working directory
+  --debug
+        Turn debug logging on
+  --help
+        Show help text
+  --version
+        Show version
+```
+
 ## Usage
 
 ```sh
