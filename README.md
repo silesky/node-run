@@ -16,11 +16,19 @@ $> brew tap silesky/tap
 $> brew install node-run
 ```
 
-### Commands
+## Usage
+
+```sh
+$> cd ~/my-projects/my-node-app
+$> nrun
+```
+
+### Flags
 
 ```
 $> nrun --help
-Usage: nrun [options] [initial search input]
+
+Usage: nrun [options] [search-input]
 Example:
 - nrun
 - nrun my-search-string
@@ -33,31 +41,4 @@ Options:
         Show help text
   --version
         Show version
-```
-
-## Usage
-
-```sh
-$> cd ~/my-projects/my-node-package
-$> nrun
-```
-
-## Development
-
-### Test
-
-```sh
-$> make test
-```
-
-### Run
-
-```sh
-$> make run ARGS=--cwd=~/projects/monorepo-example
-```
-
-### Release
-
-```sh
-$> make version # Bump version via git tag + push (trigger CI job in .github/workflows)
 ```
