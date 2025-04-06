@@ -1,10 +1,8 @@
 # node-run
 
-An fzf-like npm script runner with monorepo support. 🦋
+A smart, fzf-like npm script runner with monorepo support, executable from any project subdirectory. 🦋
 
 ![nrun basic usage](img/basic-1-crop.gif)
-
-🚩 Lightning fast ⚡️
 
 🚩 Supports all popular package managers:
 
@@ -13,7 +11,9 @@ An fzf-like npm script runner with monorepo support. 🦋
 - yarn ✅
 - Bun ✅
 
-🚩 Executable from any project subdirectory 🔥 🔥 🔥
+🚩 Lightning fast ⚡️
+
+🚩 cwd-agnostic 🔥 🔥 🔥
 
 ## Installation
 
