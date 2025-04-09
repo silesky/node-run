@@ -1,10 +1,6 @@
 # Variables
 BINARY_NAME = nrun
 BUILD_DIR = bin
-
-# Variables
-BINARY_NAME = nrun
-BUILD_DIR = bin
 VERSION ?= "0.0.0"
 
 help: ## Lists all available make tasks and some short documentation about them
